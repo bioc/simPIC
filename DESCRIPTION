@@ -1,0 +1,36 @@
+Package: simPIC
+Version: 0.99.0
+Date: 2023-02-02
+Type: Package
+Title: simPIC: A uniform quantification based method for simulating Paired-Insertion count matrices for single-cell ATAC sequencing data
+Authors@R: person("Sagrika", "Chugh", role=c("aut","cre"), email = "sagrika.chugh@gmail.com", comment = c(ORCID = "0000-0002-8050-5214"))
+Depends: SingleCellExperiment
+Imports: 
+    BiocGenerics,
+    checkmate (>= 2.0.0),
+    fitdistrplus,
+    matrixStats,
+    Matrix,
+    stats,
+    SummarizedExperiment,
+    actuar,
+    rlang,
+    S4Vectors,
+    ggplot2,
+    methods,
+    scales,
+    scuttle
+Description: simPIC is a package for simulating single-cell ATAC-seq count data.
+    It provides a user-friendly, well documented interface for data simulation.
+    Functions are proided for parameter estimation, realistic scATAC-seq data simulation, and comparing real and simulated datasets.
+biocViews: SingleCell, ATACSeq, Software, Sequencing, ImmunoOncology, DataImport
+License: GPL-3
+Encoding: UTF-8
+Suggests: 
+    knitr,
+    rmarkdown,
+    BiocStyle,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+RoxygenNote: 7.3.1
+Config/testthat/edition: 3

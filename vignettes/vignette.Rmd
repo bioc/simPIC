@@ -1,0 +1,286 @@
+---
+title: "simPIC: simulating single-cell ATAC-seq data"
+author: "Sagrika Chugh"
+package: simPIC
+date: "`r Sys.Date()`"
+output: 
+  BiocStyle::html_document:
+    toc: true
+    toc_float: true
+vignette: >
+  \usepackage[utf8]{inputenc}
+  %\VignetteIndexEntry{simPIC: simulating single-cell ATAC-seq data}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 80
+---
+
+```{r knitr-options, echo = FALSE, message = FALSE, warning = FALSE}
+    knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+    options(max.print = 30)
+```
+
+# Introduction to simPIC
+
+Welcome to simPIC!
+
+simPIC is an R package for the simple simulation of single-cell RNA sequencing
+data. This vignette gives an overview and introduction to simPIC's
+functionality.
+
+# Installation
+
+simPIC can be installed from Bioconductor:
+
+```{r install-bioc, eval = FALSE, include=TRUE}
+    BiocManager::install("simPIC")
+```
+
+# Quick start
+
+Assuming you already have a matrix of count data similar to that you wish to
+simulate there are two simple steps to creating a simulated data set with
+simPIC. Here is an example a mock dataset generated with the `mockATAC` function
+from `simPIC` package:
+
+```{r quickstart}
+    # Load package
+    suppressPackageStartupMessages({
+    library(simPIC)
+    })
+
+    # Load test data
+    set.seed(12)
+    counts <- readRDS("../inst/extdata/test.rds")
+
+    # Estimate parameters
+    est <- simPICestimate(counts)
+    # Simulate data using estimated parameters
+    sim <- simPICsimulate(est)
+```
+
+These steps will be explained in detail in the following sections but briefly
+the first step takes a dataset and estimates simulation parameters from it and
+the second step takes those parameters and simulates a new dataset.
+
+# Input data
+
+`simPIC` recommends to use a Paired-Insertion Count (PIC) matrix for optimal use
+of the quantitative information present in scATAC-seq data. You can convert your
+own matrix to PIC by following the
+[PICsnATAC](https://github.com/Zhen-Miao/PICsnATAC/blob/main/vignettes/)
+vignette. Briefly, you need three input files for PIC -
+
+1.  cell barcodes with metadata (`singlecell.csv`)
+2.  list of peak regions (`peaks.bed`)
+3.  fragment files (`fragment.tsv.gz`)
+
+```{r pic, eval=FALSE, include=TRUE}
+    pic_mat <- PIC_counting(
+    cells = cells,
+    fragment_tsv_gz_file_location = fragment_tsv_gz_file_location,
+    peak_sets = peak_sets
+    )
+```
+
+# The simPIC simulation
+
+The core of the simPIC model is a gamma-Poisson distribution. This model is used
+to generate a uniform quantification based peak-by-cell count matrix. Mean
+chromatin accessibility signals for each peak are simulated from a [weibull
+distribution](https://en.wikipedia.org/wiki/Weibull_distribution) with default
+settings. Users have the flexibility to choose from `gamma`, `lognormal` or
+`pareto` distribution as well. Each cell is given an expected library size,
+simulated from a log-normal distribution to match to a given dataset. Sparsity
+is imposed on counts simulated from a [Poisson
+distribution](https://en.wikipedia.org/wiki/Poisson_distribution).
+
+# The `simPICcount` class
+
+All the parameters for the simPIC simulation are stored in a `simPICcount`
+object. A class specifically desgined for storing simPIC scATAC-seq simulation
+parameters. Let's create a new one and see what it looks like.
+
+```{r simPICparams}
+    sim.params <- newsimPICcount()
+```
+
+we can see the default values for the simPICcount object parameters. These
+values are based on provided test data.
+
+```{r params}
+    sim.params
+```
+
+## Getting and setting parameters
+
+To get a particular parameter, for e.g., number of peaks, we can use `simPICget`
+function:
+
+```{r getParam}
+    simPICget(sim.params, "nPeaks")
+```
+
+Alternatively, to give a parameter a new value we can use the
+`setsimPICparameters` function:
+
+```{r setParam}
+    sim.params <- setsimPICparameters(sim.params, nPeaks = 2000)
+    simPICget(sim.params, "nPeaks")
+```
+
+To get or set multiple parameters use `simPICget` or `setsimPICparameters`
+functions:
+
+```{r getParams-setParams}
+    # Set multiple parameters at once (using a list)
+    sim.params <- setsimPICparameters(sim.params, 
+                            update = list(nPeaks = 8000, nCells = 500))
+    # Extract multiple parameters as a list
+    params <- simPICgetparameters(sim.params,
+                            c("nPeaks", "nCells", "peak.mean.shape"))
+    # Set multiple parameters at once (using additional arguments)
+    params <- setsimPICparameters(sim.params, 
+                            lib.size.sdlog = 3.5, lib.size.meanlog = 9.07)
+    params
+```
+
+# Estimating parameters
+
+simPIC allows you to estimate many of it's parameters from a
+SingleCellExperiment object containing counts or a counts matrix using the
+`simPICestimate` function.
+
+```{r simPICestimate}
+    # Get the counts from test data
+    count <- readRDS("../inst/extdata/test.rds")
+
+    # Check that counts is a dgCMatrix
+    class(count)
+    typeof(count)
+
+    # Check the dimensions, each row is a peak, each column is a cell
+    dim(count)
+
+    # Show the first few entries
+    count[1:5, 1:5]
+
+    new <- newsimPICcount()
+    new <- simPICestimate(count)
+    
+    ## estimating using gamma distribution
+    ## new <- simPICestimate(count, pm.distr = "gamma")
+```
+
+Here we estimated parameters from a counts matrix using default parameters. The
+estimation process has the following steps:
+
+1.  Mean parameters are estimated by fitting a weibull distribution (default) to
+    the peak means.
+2.  Library size parameters are estimated by fitting a log-normal distribution
+    to the library sizes.
+3.  Sparsity parameter is estimated by fitting a Bernoulli distribution.
+
+For more details of the estimation procedures see `?simPICestimate`.
+
+# Simulating counts
+
+Once we have a set of parameters we are happy with we can use `simPICsimulate`
+to simulate counts. To make adjustments to the parameters provide them as
+additional arguments. Alternatively if we don't supply any parameters defaults
+will be used:
+
+```{r simPICsimulate}
+    sim <- simPICsimulate(new, nCells = 1000)
+    sim
+    
+    ## sim <- simPICsimulate(new, nCells =1000, pm.distr = "gamma")
+```
+
+Looking at the output of `simPICsimulate` we can see that `sim` is
+`SingleCellExperiment` object with `r nrow(sim)` features (peaks) and
+`r ncol(sim)` samples (cells). The main part of this object is a features by
+samples matrix containing the simulated counts (accessed using `counts`).
+Additionally a `SingleCellExperiment` contains information about each cell
+(accessed using `colData`) and each peak (accessed using `rowData`). simPIC uses
+these slots, as well as `assays`, to store information about the intermediate
+values of the simulation.
+
+```{r SCE}
+    # Access the counts
+    counts(sim)[1:5, 1:5]
+    # Information about peaks
+    head(rowData(sim))
+    # Information about cells
+    head(colData(sim))
+    # Peak by cell matrices
+    names(assays(sim))
+```
+
+For more details about the `SingleCellExperiment` object refer to the
+[vignette][SCE-vignette].
+
+The `simPICsimulate` function provides additional simulation details:
+
+\* **Cell information (`colData`)**
+
+\* `Cell` - Unique cell identifier.
+
+\* `exp.libsize` - The expected library size for that cell. (not obtained from
+the final simulated counts)
+
+\* **Peak information (`rowData`)**
+
+\* `Peak` - Unique peak identifier.
+
+\* `exp.peakmean` - The expected peak means for that peak. (not obtained from
+the final simulated counts)
+
+\* **Peak by cell information (`assays`)**
+
+\* `counts` - The final simulated counts.
+
+For more information on the simulation see `?simPICsimulate`.
+
+# Comparing simulations and real data
+
+simPIC provides a function `simPICcompare` that aims to make these comparisons
+easier. This function takes a list of `SingleCellExperiment` objects, combines
+the datasets and produces comparison plots. Let's make two small simulations and
+see how they compare.
+
+```{r comparison}
+    sim1 <- simPICsimulate(nPeaks = 20000, nCells = 1000)
+    sim2 <- simPICsimulate(nPeaks = 20000, nCells = 1000)
+    comparison <- simPICcompare(list(real = sim1, simPIC = sim2))
+
+    names(comparison)
+    names(comparison$Plots)
+```
+
+The returned list has three items. The first two are the combined datasets by
+peak (`RowData`) and by cell (`ColData`) and the third contains some comparison
+plots (produced using `ggplot2`), for example a plot of the distribution of
+means:
+
+```{r comparison-means}
+    comparison$Plots$Means
+```
+
+These are only a few of the plots you might want to consider but it should be
+easy to make more using the returned data.
+
+# Citing simPIC
+
+If you use simPIC in your work please cite our paper:
+
+```{r citation}
+    citation("simPIC")
+```
+
+# Session information {.unnumbered}
+
+```{r sessionInfo}
+    sessionInfo()
+```
