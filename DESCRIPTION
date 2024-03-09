@@ -1,5 +1,5 @@
 Package: simPIC
-Version: 0.99.1
+Version: 0.99.2
 Date: 2023-02-02
 Type: Package
 Title: A uniform quantification based method for simulating 
@@ -26,7 +26,7 @@ Imports:
     scuttle
 Description: simPIC is a package for simulating single-cell ATAC-seq count data.
     It provides a user-friendly, well documented interface for data simulation.
-    Functions are proided for parameter estimation, realistic scATAC-seq data 
+    Functions are provided for parameter estimation, realistic scATAC-seq data 
     simulation, and comparing real and simulated datasets.
 biocViews: SingleCell, ATACSeq, Software, Sequencing, ImmunoOncology, DataImport
 License: GPL-3
