@@ -15,6 +15,6 @@ A SingleCellExperiment(SCE) object with the sparse matrix stored
 in the "counts" assay.
 }
 \description{
-This function converts a sparse matrix into a SingleCellExperiment(SCE)
+This function converts a dgc/sparse matrix into a SingleCellExperiment(SCE)
 object.
 }

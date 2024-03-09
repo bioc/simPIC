@@ -6,7 +6,7 @@
 \alias{simPIC-package}
 \title{simPIC: A uniform quantification based method for simulating Paired-Insertion count matrices for single-cell ATAC sequencing data}
 \description{
-simPIC is a package for simulating single-cell ATAC-seq count data. It provides a user-friendly, well documented interface for data simulation. Functions are proided for parameter estimation, realistic scATAC-seq data simulation, and comparing real and simulated datasets.
+simPIC is a package for simulating single-cell ATAC-seq count data. It provides a user-friendly, well documented interface for data simulation. Functions are provided for parameter estimation, realistic scATAC-seq data simulation, and comparing real and simulated datasets.
 
 \itemize{
 \item count class (\code{\link{newsimPICcount}})
