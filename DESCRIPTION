@@ -1,5 +1,5 @@
 Package: simPIC
-Version: 0.99.1
+Version: 0.99.2
 Date: 2023-02-02
 Type: Package
 Title: A uniform quantification based method for simulating 
@@ -8,7 +8,7 @@ Authors@R: person("Sagrika", "Chugh", role=c("aut","cre"),
            email = "sagrika.chugh@gmail.com", 
            comment = c(ORCID = "0000-0002-8050-5214"))
 Depends: 
-    R (>= 4.3.0),
+    R (>= 4.4.0),
     SingleCellExperiment
 Imports: 
     BiocGenerics,
