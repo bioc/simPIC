@@ -14,7 +14,7 @@ simPICestimateLibSize(counts, object, verbose)
 \item{verbose}{logical. To print messages or not.}
 }
 \value{
-simPICcount object with estimated library size parameters
+simPICcount object with estimated library size parameters.
 }
 \description{
 Estimate the library size parameters for simPIC simulation.

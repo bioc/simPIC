@@ -36,7 +36,8 @@ parameters.}
 counts.}
 
 \item{pm.distr}{statistical distribution for estimating peak mean
-parameters.}
+parameters. Available distributions: gamma, weibull, lngamma, pareto.
+Default is weibull.}
 
 \item{verbose}{logical variable. Prints the simulation progress if TRUE.}
 }
@@ -44,12 +45,11 @@ parameters.}
 simPICcount object containing all estimated parameters.
 }
 \description{
-Estimate parameters library size, peak means, and sparsity
+Estimate parameters for library size, peak means, and sparsity
 for simPIC simulation from a real peak by cell input matrix
 }
 \examples{
-counts <- readRDS(system.file("extdata","test.rds", package = "simPIC"))
+counts <- readRDS(system.file("extdata", "test.rds", package = "simPIC"))
 est <- newsimPICcount()
 est <- simPICestimate(counts, pm.distr = "weibull")
-
 }

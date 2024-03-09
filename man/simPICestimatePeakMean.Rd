@@ -11,7 +11,7 @@ simPICestimatePeakMean(norm.counts, object, pm.distr, verbose)
 
 \item{object}{simPICcount object to store estimated values.}
 
-\item{pm.distr}{distribution parameter for peak means}
+\item{pm.distr}{distribution parameter for peak means.}
 
 \item{verbose}{logical. To print progress messages or not.}
 }

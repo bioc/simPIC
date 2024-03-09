@@ -2,9 +2,7 @@
 % Please edit documentation in R/simPICcompare.R
 \name{simPICcompare}
 \alias{simPICcompare}
-\title{Compare SingleCellExperiment objects
-Combine the data from several SingleCellExperiment objects and produce
-some basic plots comparing them.}
+\title{Compare SingleCellExperiment objects}
 \usage{
 simPICcompare(
   sces,
@@ -30,12 +28,12 @@ compare.}
 List containing the combined datasets and plots.
 }
 \description{
-Compare SingleCellExperiment objects
-Combine the data from several SingleCellExperiment objects and produce
+Combine data from several SingleCellExperiment objects and produce
 some basic plots comparing them.
 }
 \details{
 The returned list has three items:
+
 \describe{
    \item{\code{RowData}}{Combined row data from the provided
    SingleCellExperiments.}
@@ -58,6 +56,7 @@ The returned list has three items:
    }
  }
 }
+
 The plots returned by this function are created using
 \code{\link[ggplot2]{ggplot}} and are only a sample of the kind of plots
 you might like to consider. The data used to create these plots is also
@@ -66,12 +65,12 @@ further plots using \code{\link[ggplot2]{ggplot}}.
 }
 \examples{
 sim1 <- simPICsimulate(
-  nPeaks = 1000, nCells = 500,
-  pm.distr = "weibull", seed = 7856
+    nPeaks = 1000, nCells = 500,
+    pm.distr = "weibull", seed = 7856
 )
 sim2 <- simPICsimulate(
-  nPeaks = 1000, nCells = 500,
-  pm.distr = "gamma", seed = 4234
+    nPeaks = 1000, nCells = 500,
+    pm.distr = "gamma", seed = 4234
 )
 comparison <- simPICcompare(list(weibull = sim1, gamma = sim2))
 names(comparison)

@@ -7,17 +7,17 @@
 selectFit(data, distr, verbose = TRUE)
 }
 \arguments{
-\item{data}{The data to fit}
+\item{data}{The data to fit.}
 
-\item{distr}{Name of the distribution to fit}
+\item{distr}{Name of the distribution to fit.}
 
-\item{verbose}{logical. To print messages or not}
+\item{verbose}{logical. To print messages or not.}
 }
 \value{
 The selected fit object
 }
 \description{
-Trying a variety of fitting methods and selecting the best one
+Trying two fitting methods and selecting the best one.
 }
 \details{
 The distribution is fitted to the data using each of the

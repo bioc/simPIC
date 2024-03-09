@@ -1,0 +1,20 @@
+## Creating test data
+
+## Data used
+This data is a subset of PBMC10k(CD8 effector) celltype downloaded from 
+[10Xwebsite](https://www.10xgenomics.com/datasets/10k-human-pbmcs-atac-v2-chromium-controller-2-standard).
+
+## Steps to generate test data
+The downloaded data was processed and annotated using [Signac](https://stuartlab.org/signac/articles/pbmc_vignette) with filtering peaks that are accessible in atleast 1% of cells. Celltype specific count matrices were extracted.
+
+The resulting count matrix(CD8 effector) was then converted to Paired Insertion Count matrix following [PICsnATAC](https://github.com/Zhen-Miao/PICsnATAC/blob/main/vignettes/Run_PIC_counting_on_pbmc_3k_data.ipynb) vignette.
+
+The PIC matrix was further subsetted to create test data with nPeaks = 5000 and nCells = 1000.
+
+The default parameters are obtained by estimating using the test data. 
+
+To replicate the parameters, please run the script testdata.R
+
+
+
+

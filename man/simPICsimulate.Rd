@@ -17,7 +17,9 @@ See \code{\link{simPICcount}} for details.}
 
 \item{verbose}{logical variable. Prints the simulation progress if TRUE.}
 
-\item{pm.distr}{distribution parameter for peak means}
+\item{pm.distr}{distribution parameter for peak means.
+Available distributions: gamma, weibull, lngamma, pareto.
+Default is weibull.}
 
 \item{...}{Any additional parameter settings to override what is provided
 in \code{simPICcount} object.}
@@ -27,7 +29,7 @@ SingleCellExperiment object containing the simulated counts.
 }
 \description{
 Simulate peak by cell count matrix from a sparse single-cell ATAC-seq
-peak by cell input using simPIC methods
+peak by cell input using simPIC methods.
 }
 \details{
 simPIC provides the option to manually adjust each of the
@@ -37,10 +39,9 @@ simPIC provides the option to manually adjust each of the
  The simulation involves following steps:
  \enumerate{
  \item Set up simulation parameters
- \item Set up default parameters if needed
  \item Set up SingleCellExperiment object
  \item Simulate library sizes
- \item Simulate accessibility probability
+ \item Simulate sparsity
  \item Simulate peak means
  \item Create final synthetic counts
  }
@@ -48,27 +49,10 @@ simPIC provides the option to manually adjust each of the
 The final output is a
 \code{\link[SingleCellExperiment]{SingleCellExperiment}} object that
 contains the simulated count matrix. The parameters are stored in the
-\code{\link{colData}}(for cell specific information),
+\code{\link{colData}} (for cell specific information),
 \code{\link{rowData}} (for peak specific information) or
 \code{\link{assays}} (for peak by cell matrix) slots. This additional
 information includes:
-\describe{
-    \item{\code{rowData}}{
-        \describe{
-            \item{PeakMean}{The simulated peak means.}
-        }
-    }
-    \item{\code{colData}}{
-        \describe{
-            \item{LibSize}{The simulated library size values.}
-        }
-    }
-    \item{\code{assays}}{
-        \describe{
-            \item{counts}{The sparse matrix containing simulated counts.}
-        }
-    }
-}
 }
 \examples{
 # default simulation

@@ -4,8 +4,7 @@
 \name{simPICcount}
 \alias{simPICcount}
 \alias{simPICcount-class}
-\title{The simPICcount class
-S4 class that holds parameters for simPIC simulation}
+\title{The simPICcount class}
 \value{
 a simPIC class object.
 The parameters not shown in brackets can be estimated from real data
@@ -13,8 +12,7 @@ using \code{\link{simPICestimate}}. For details of the simPIC simulation
 see \code{\link{simPICsimulate}}.
 }
 \description{
-The simPICcount class
-S4 class that holds parameters for simPIC simulation
+S4 class that holds parameters for simPIC simulation.
 }
 \section{Parameters}{
 

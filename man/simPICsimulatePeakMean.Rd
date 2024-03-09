@@ -11,7 +11,9 @@ simPICsimulatePeakMean(object, sim, pm.distr, verbose)
 
 \item{sim}{SingleCellExperiment object containing simulation parameters.}
 
-\item{pm.distr}{distribution parameter for peak means}
+\item{pm.distr}{distribution parameter for peak means.
+Available distributions: gamma, weibull, lngamma, pareto.
+Default is weibull.}
 
 \item{verbose}{logical. Whether to print progress messages.}
 }

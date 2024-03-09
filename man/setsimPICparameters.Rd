@@ -7,17 +7,17 @@
 setsimPICparameters(object, update = NULL, ...)
 }
 \arguments{
-\item{object}{input simPICcount object}
+\item{object}{input simPICcount object.}
 
-\item{update}{new parameters}
+\item{update}{new parameters.}
 
-\item{...}{set new parameters for simPICcount object}
+\item{...}{set new parameters for simPICcount object.}
 }
 \value{
-simPICcount object with updated parameters
+simPICcount object with updated parameters.
 }
 \description{
-Set input parameters of the simPICcount object
+Set input parameters of the simPICcount object.
 }
 \examples{
 object <- newsimPICcount()

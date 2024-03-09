@@ -10,11 +10,13 @@ newsimPICcount(...)
 \item{...}{Variables to set newsimPICcount object parameters.}
 }
 \value{
-new object from class simPICcount
+new object from class simPICcount.
 }
 \description{
-create a newsimPICcount object to store parameters
-this function creates the object variable which is passed in all
+Create a newsimPICcount object to store parameters.
+}
+\details{
+This function creates the object variable which is passed in all
 functions.
 }
 \examples{
