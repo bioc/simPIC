@@ -1,7 +1,8 @@
-simPIC.Rproj
+*.Rproj
 .Rproj.user
 .Rhistory
 .RData
+simPIC.Rproj
 .Ruserdata
 /doc/
 /Meta/
