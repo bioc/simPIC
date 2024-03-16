@@ -62,6 +62,7 @@
 #' @export
 simPICcompare <- function(sces, point.size = 0.2, point.alpha = 0.1,
                         fits = TRUE, colours = NULL) {
+    
     checkmate::assertList(sces,
         types = "SingleCellExperiment",
         any.missing = FALSE, min.len = 1, names = "unique"
@@ -110,8 +111,8 @@ simPICcompare <- function(sces, point.size = 0.2, point.alpha = 0.1,
 
     features$Dataset <- factor(features$Dataset, levels = names(sces))
     cells$Dataset <- factor(cells$Dataset, levels = names(sces))
-    features <- data.frame(features)
-    cells <- data.frame(cells)
+    features <- as.data.frame(features)
+    cells <- as.data.frame(cells)
 
     means <- ggplot2::ggplot(
         features,
@@ -268,6 +269,7 @@ simPICcompare <- function(sces, point.size = 0.2, point.alpha = 0.1,
     )
     return(comparison)
 }
+
 
 #' Add feature statistics
 #'

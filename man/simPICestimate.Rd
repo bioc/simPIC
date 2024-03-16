@@ -16,7 +16,7 @@ simPICestimate(
 \method{simPICestimate}{SingleCellExperiment}(
   counts,
   object = newsimPICcount(),
-  pm.distr = c("gamma", "weibull", "pareto", "lngamma"),
+  pm.distr = "weibull",
   verbose = TRUE
 )
 
@@ -29,7 +29,7 @@ simPICestimate(
 }
 \arguments{
 \item{counts}{either a sparse peak by cell count matrix, or a
-SingleCellExperiment object containing a count matrix to estimate
+SingleCellExperiment object containing count data to estimate
 parameters.}
 
 \item{object}{simPICcount object to store estimated parameters and
@@ -45,7 +45,7 @@ Default is weibull.}
 simPICcount object containing all estimated parameters.
 }
 \description{
-Estimate parameters for library size, peak means, and sparsity
+Estimate simulation parameters for library size, peak means, and sparsity
 for simPIC simulation from a real peak by cell input matrix
 }
 \examples{

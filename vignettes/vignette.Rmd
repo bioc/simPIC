@@ -68,7 +68,7 @@ the second step takes those parameters and simulates a new dataset.
 `simPIC` recommends to use a Paired-Insertion Count (PIC) matrix for optimal use
 of the quantitative information present in scATAC-seq data. You can convert your
 own matrix to PIC by following the `r BiocStyle::Biocpkg("PICsnATAC")`
-[vignette](https://github.com/Zhen-Miao/PICsnATAC/blob/main/vignettes/Run_PIC_counting_on_pbmc_3k_data.ipynb). Briefly, you need three input files for PIC -
+[vignette][PIC-vignette]. Briefly, you need three input files for PIC -
 
 1.  cell barcodes with metadata (`singlecell.csv`)
 2.  list of peak regions (`peaks.bed`)
@@ -220,8 +220,8 @@ head(colData(sim))
 names(assays(sim))
 ```
 
-For more details about the `r BiocStyle::Biocpkg("SingleCellExperiment")` object refer to the
-[vignette](https://www.bioconductor.org/packages/devel/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html).
+For more details about the `r BiocStyle::Biocpkg("SingleCellExperiment")` 
+object refer to the[vignette][SCE-vignette].
 
 The `simPICsimulate` function provides additional simulation details:
 
@@ -286,3 +286,5 @@ citation("simPIC")
 ```{r sessionInfo}
 sessionInfo()
 ```
+[SCE-vignette]:https://bioconductor.org/packages/devel/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html
+[PIC-vignette]:https://github.com/Zhen-Miao/PICsnATAC/blob/main/vignettes/Run_PIC_counting_on_pbmc_3k_data.ipynb).

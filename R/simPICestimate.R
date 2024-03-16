@@ -1,16 +1,16 @@
 #' Estimate simPIC simulation parameters
 #'
-#' Estimate parameters for library size, peak means, and sparsity
+#' Estimate simulation parameters for library size, peak means, and sparsity
 #' for simPIC simulation from a real peak by cell input matrix
 #'
 #' @param counts either a sparse peak by cell count matrix, or a
-#' SingleCellExperiment object containing a count matrix to estimate
-#' parameters.
+#'        SingleCellExperiment object containing count data to estimate
+#'        parameters.
 #' @param object simPICcount object to store estimated parameters and
-#' counts.
+#'        counts.
 #' @param pm.distr statistical distribution for estimating peak mean
-#' parameters. Available distributions: gamma, weibull, lngamma, pareto.
-#' Default is weibull.
+#'        parameters. Available distributions: gamma, weibull, lngamma, pareto.
+#'        Default is weibull.
 #' @param verbose logical variable. Prints the simulation progress if TRUE.
 #'
 #' @return simPICcount object containing all estimated parameters.
@@ -33,16 +33,14 @@ simPICestimate <- function(counts,
 #' @export
 simPICestimate.SingleCellExperiment <- function(counts,
                                                 object = newsimPICcount(),
-                                                pm.distr = c(
-                                                    "gamma", "weibull",
-                                                    "pareto", "lngamma"
-                                                ),
+                                                pm.distr = "weibull",
                                                 verbose = TRUE) {
+    checkmate::assert_choice(pm.distr, c(
+        "gamma", "weibull",
+        "pareto", "lngamma"
+    ))
     counts <- getCounts(counts)
-    simPICestimate.dgCMatrix(
-        as(counts, "dgCMatrix"), object, pm.distr,
-        verbose
-    )
+    simPICestimate(counts, object, pm.distr)
 }
 
 #' @rdname simPICestimate
@@ -64,7 +62,7 @@ simPICestimate.dgCMatrix <- function(counts,
         nCells = ncol(counts)
     )
 
-    counts <- counts[, which(colSums(counts) != 0)]
+    counts <- counts[, which(colSums(counts) != 0), drop=FALSE]
 
     lib.sizes <- colSums(counts)
     lib.med <- median(lib.sizes)

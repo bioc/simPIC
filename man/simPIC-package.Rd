@@ -15,8 +15,22 @@ simPIC is a package for simulating single-cell ATAC-seq count data. It provides 
 \item plots (\code{\link{simPICcompare}})
 }
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/sagrikachugh/simPIC}
+  \item Report bugs at \url{https://github.com/sagrikachugh/simPIC/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Sagrika Chugh \email{sagrika.chugh@gmail.com} (\href{https://orcid.org/0000-0002-8050-5214}{ORCID})
+
+Authors:
+\itemize{
+  \item Davis McCarthy
+  \item Heejung Shim
+}
 
 }
 \keyword{internal}
