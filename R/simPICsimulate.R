@@ -236,15 +236,10 @@ simPICsimulateTrueCounts <- function(object, sim) {
     }
 
     true_counts <- as(
-        sapply(
-            1:nCells,
-            sim_true_counts
-        ),
-        "dgCMatrix"
+                    sapply(seq_len(nCells),
+                    sim_true_counts),
+                    "dgCMatrix"
     )
-
-    true_counts <- as(true_counts, "dgCMatrix")
-
     assays(sim, withDimnames = FALSE)$counts <- true_counts
     return(sim)
 }

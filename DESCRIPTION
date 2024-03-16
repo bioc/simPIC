@@ -1,12 +1,14 @@
 Package: simPIC
-Version: 0.99.4
+Version: 0.99.5
 Date: 2023-02-02
 Type: Package
 Title: A uniform quantification based method for simulating 
        Paired-Insertion count matrices for single-cell ATAC sequencing data
-Authors@R: person("Sagrika", "Chugh", role=c("aut","cre"), 
+Authors@R: c(person("Sagrika", "Chugh", role=c("aut","cre"), 
            email = "sagrika.chugh@gmail.com", 
-           comment = c(ORCID = "0000-0002-8050-5214"))
+           comment = c(ORCID = "0000-0002-8050-5214")),
+           person("Davis","McCarthy", role=c("aut")),
+           person("Heejung","Shim", role=c("aut")))
 Depends: 
     R (>= 4.4.0),
     SingleCellExperiment
@@ -40,3 +42,5 @@ Suggests:
 VignetteBuilder: knitr
 RoxygenNote: 7.3.1
 Config/testthat/edition: 3
+URL: https://github.com/sagrikachugh/simPIC 
+BugReports: https://github.com/sagrikachugh/simPIC/issues

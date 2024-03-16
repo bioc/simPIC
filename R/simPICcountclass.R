@@ -38,7 +38,9 @@
 #' @return a simPIC class object.
 #' The parameters not shown in brackets can be estimated from real data
 #' using \code{\link{simPICestimate}}. For details of the simPIC simulation
-#' see \code{\link{simPICsimulate}}.
+#' see \code{\link{simPICsimulate}}. The default parameters are based on PBMC10k
+#' dataset and can be reproduced using test data and script provided in 
+#' inst/script
 #' @name simPICcount
 #' @rdname simPICcount
 #' @exportClass simPICcount
