@@ -23,8 +23,6 @@ options(max.print = 30)
 
 # Introduction to simPIC
 
-Welcome to simPIC!
-
 simPIC is an R package for the simple simulation of single-cell RNA sequencing
 data. This vignette gives an overview and introduction to simPIC's
 functionality.
@@ -55,6 +53,7 @@ counts <- readRDS(system.file("extdata", "test.rds", package = "simPIC"))
 
 # Estimate parameters
 est <- simPICestimate(counts)
+
 # Simulate data using estimated parameters
 sim <- simPICsimulate(est)
 ```
@@ -172,7 +171,7 @@ new <- newsimPICcount()
 new <- simPICestimate(count)
 
 ## estimating using gamma distribution
-# new <- simPICestimate(count, pm.distr = "gamma")
+## new <- simPICestimate(count, pm.distr = "gamma")
 ```
 
 Here we estimated parameters from a counts matrix using default parameters. The
@@ -197,6 +196,7 @@ will be used:
 sim <- simPICsimulate(new, nCells = 1000)
 sim
 
+## simulating using gamma distribution
 ## sim <- simPICsimulate(new, nCells =1000, pm.distr = "gamma")
 ```
 

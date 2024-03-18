@@ -9,7 +9,7 @@ The downloaded data was processed and annotated using [Signac](https://stuartlab
 
 The resulting count matrix(CD8 effector) was then converted to Paired Insertion Count matrix following [PICsnATAC](https://github.com/Zhen-Miao/PICsnATAC/blob/main/vignettes/Run_PIC_counting_on_pbmc_3k_data.ipynb) vignette.
 
-The PIC matrix was further subsetted to create test data with nPeaks = 5000 and nCells = 1000.
+The PIC matrix was further subsetted to create test data with nPeaks = 5000 and nCells = 700.
 
 The default parameters are obtained by estimating using the test data. 
 

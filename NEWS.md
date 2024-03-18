@@ -1,3 +1,6 @@
+## Version 0.99.6 (2024-03-16)
+* Replacing sapply with vapply in `simPICsimulate` line 238.
+
 ## Version 0.99.5 (2024-03-16)
 * Addressing notes after reviewer comments.
 * Updated simPIC count documentation. 
