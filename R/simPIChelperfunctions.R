@@ -136,7 +136,7 @@ rbindMatched <- function(df1, df2) {
 
 #' Convert Sparse Matrix to SingleCellExperiment object
 #'
-#' This function converts a dgc/sparse matrix into a SingleCellExperiment(SCE)
+#' This function converts a sparse matrix into a SingleCellExperiment(SCE)
 #' object.
 #'
 #' @param sparse_data A sparse matrix containing count data, where rows are

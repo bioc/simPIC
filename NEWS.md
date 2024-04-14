@@ -1,3 +1,7 @@
+## Version 0.99.7 (2024-04-14)
+* Updating title.
+* Simplifying estimate sparsity description.
+
 ## Version 0.99.6 (2024-03-16)
 * Replacing sapply with vapply in `simPICsimulate` line 238.
 

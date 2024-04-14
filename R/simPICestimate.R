@@ -171,22 +171,18 @@ selectFit <- function(data, distr, verbose = TRUE) {
     return(fits[[selected]])
 }
 
-#' Estimate simPIC peak sparsity.
+#' Estimate sparsity.
 #'
-#' Extract the accessibility proportion (sparsity) of each cell among all
-#' peaksvfrom the input count matrix.
+#'This function estimates the sparsity of cells based on a normalized counts 
+#'matrix and updates the parameters of a simPIC object accordingly.
 #'
-#' @param norm.counts A sparse count matrix to estimate parameters from.
+#'
+#' @param norm.counts A normalized count matrix to estimate parameters from.
 #' @param object simPICcount object to store estimated parameters.
 #' @param verbose logical. To print messages or not.
 #'
-#' @return simPICcount object with updated non-zero cell proportion
-#' parameter.
+#' @return simPICcount object with updated sparsity parameter.
 #'
-#' @details
-#' Vector of non-zero cell proportions of peaks is calculated by
-#' dividing the number of non-zero entries over the number of all cells
-#' for each peak.
 #' @importFrom Matrix rowSums
 simPICestimateSparsity <- function(norm.counts, object, verbose) {
     sparsity <- ifelse(rowMeans(norm.counts == 0) < 1,
