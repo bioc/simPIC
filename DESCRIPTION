@@ -1,5 +1,5 @@
 Package: simPIC
-Version: 0.99.7
+Version: 1.0.0
 Date: 2023-02-02
 Type: Package
 Title: simPIC: flexible simulation of paired-insertion counts for single-cell 
