@@ -1,9 +1,8 @@
 # simPIC
-|                |               |
-| -------------- | ------------- |
-| Project Status | [![Project Status.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip) |
 
 ## Overview
+<img src='doc/logo/Logo.png' align="right" height="139" />
+
 simPIC is an R package for simple simulation of single-cell Assay for Transposase Accessible Chromatin sequencing (scATAC-seq) data. simPIC provides a an easy to use interface for:
 
 * estimating simulation parameters
