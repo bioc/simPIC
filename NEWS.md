@@ -1,4 +1,4 @@
-## Version 0.99.7 (2025-04-21)
+## Version 1.5.1 (2025-04-21)
 * Fixing typo in vignette, changed `lognormal` to `lognormal-gamma`
 
 ## Version 0.99.7 (2024-04-14)
