@@ -87,7 +87,7 @@ The core of the simPIC model is a gamma-Poisson distribution. This model is used
 to generate a uniform quantification based peak-by-cell count matrix. Mean
 chromatin accessibility signals for each peak are simulated from a [weibull
 distribution](https://en.wikipedia.org/wiki/Weibull_distribution) with default
-settings. Users have the flexibility to choose from `gamma`, `lognormal` or
+settings. Users have the flexibility to choose from `gamma`, `lognormal-gamma` or
 `pareto` distribution as well. Each cell is given an expected library size,
 simulated from a log-normal distribution to match to a given dataset. Sparsity
 is imposed on counts simulated from a [Poisson
