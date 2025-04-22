@@ -25,7 +25,8 @@ Imports:
     S4Vectors,
     methods,
     scales,
-    scuttle
+    scuttle,
+    edgeR
 Description: simPIC is a package for simulating single-cell ATAC-seq count data.
     It provides a user-friendly, well documented interface for data simulation.
     Functions are provided for parameter estimation, realistic scATAC-seq data 

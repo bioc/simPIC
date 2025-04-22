@@ -11,6 +11,8 @@
 #' @param pm.distr statistical distribution for estimating peak mean
 #'        parameters. Available distributions: gamma, weibull, lngamma, pareto.
 #'        Default is weibull.
+#' @param method to use for simulation. Single for simulating one cell-type or
+#'        groups for simulating distinct cell-types.           
 #' @param verbose logical variable. Prints the simulation progress if TRUE.
 #'
 #' @return simPICcount object containing all estimated parameters.
@@ -24,6 +26,7 @@ simPICestimate <- function(counts,
                         pm.distr = c(
                         "gamma", "weibull", "pareto", "lngamma"
                         ),
+                        method = c("single","groups"),
                         verbose = TRUE) {
     UseMethod("simPICestimate")
 }
@@ -34,13 +37,15 @@ simPICestimate <- function(counts,
 simPICestimate.SingleCellExperiment <- function(counts,
                                                 object = newsimPICcount(),
                                                 pm.distr = "weibull",
+                                                method = "single",
                                                 verbose = TRUE) {
     checkmate::assert_choice(pm.distr, c(
         "gamma", "weibull",
         "pareto", "lngamma"
     ))
+    checkmate::assert_choice(method, c("single", "groups"))
     counts <- getCounts(counts)
-    simPICestimate(counts, object, pm.distr)
+    simPICestimate(counts, object, pm.distr, method)
 }
 
 #' @rdname simPICestimate
@@ -50,16 +55,20 @@ simPICestimate.SingleCellExperiment <- function(counts,
 simPICestimate.dgCMatrix <- function(counts,
                             object = newsimPICcount(),
                             pm.distr = "weibull",
+                            method = "single",
                             verbose = TRUE) {
     checkmate::assertClass(object, "simPICcount")
     checkmate::assert_choice(pm.distr, c(
         "gamma", "weibull",
         "pareto", "lngamma"
     ))
-
+    checkmate::assert_choice(method, c("single", "groups"))
+    
     object <- setsimPICparameters(object,
         nPeaks = nrow(counts),
-        nCells = ncol(counts)
+        nCells = ncol(counts),
+        batchCells = ncol(counts)
+        
     )
 
     counts <- counts[, which(colSums(counts) != 0), drop=FALSE]
@@ -82,8 +91,13 @@ simPICestimate.dgCMatrix <- function(counts,
         message("estimating sparsity...")
         object <- simPICestimateSparsity(counts, object, verbose)
         message("estimating peak mean parameters...")
-        object <-
-            simPICestimatePeakMean(norm.counts, object, pm.distr, verbose)
+        object <- simPICestimatePeakMean(norm.counts, object, pm.distr, verbose)
+    }
+    
+    if(method == "groups")
+    {
+        message("estimating BCV...")
+        object <- simPICEstBCV(counts, object, verbose)
     }
     return(object)
 }
@@ -272,6 +286,44 @@ simPICestimatePeakMean <- function(norm.counts, object, pm.distr, verbose) {
     )
     return(object)
 }
+
+#' Estimate simPIC Biological Coefficient of Variation parameters
+#'
+#' Parameters are estimated using the \code{\link[edgeR]{estimateDisp}} function
+#' in the \code{edgeR} package.
+#'
+#' @param counts counts matrix to estimate parameters from.
+#' @param object simPICcount object to store estimated values in.
+#' @param verbose logical. To print progress messages or not.
+#'
+#' @details
+#' The \code{\link[edgeR]{estimateDisp}} function is used to estimate the common
+#' dispersion and prior degrees of freedom. See
+#' \code{\link[edgeR]{estimateDisp}} for details. When estimating parameters on
+#' simulated data we found a broadly linear relationship between the true
+#' underlying common dispersion and the \code{edgR} estimate, therefore we
+#' apply a small correction, \code{disp = -0.3 + 0.15 * edgeR.disp}.
+#'
+#' @return simPICcount object with estimated values.
+
+simPICEstBCV <- function(counts, object, verbose) {
+    # Add dummy design matrix to avoid print statement
+    design <- matrix(1, ncol(counts), 1)
+    disps <- edgeR::estimateDisp(counts, design = design)
+    bcv.common = -0.3 + 0.15 * disps$common.dispersion
+    
+    bcv.df = disps$prior.df
+    
+    object <- setsimPICparameters(
+        object,
+        bcv.common = bcv.common,
+        bcv.df = bcv.df 
+    )
+    
+    return(object)
+}
+
+
 dlngamma <- function(x, pi, shape, rate, meanlog, sdlog) {
     pi <- zero_one(pi)
     shape <- positive(shape)

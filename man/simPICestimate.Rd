@@ -10,6 +10,7 @@ simPICestimate(
   counts,
   object = newsimPICcount(),
   pm.distr = c("gamma", "weibull", "pareto", "lngamma"),
+  method = c("single", "groups"),
   verbose = TRUE
 )
 
@@ -17,6 +18,7 @@ simPICestimate(
   counts,
   object = newsimPICcount(),
   pm.distr = "weibull",
+  method = "single",
   verbose = TRUE
 )
 
@@ -24,6 +26,7 @@ simPICestimate(
   counts,
   object = newsimPICcount(),
   pm.distr = "weibull",
+  method = "single",
   verbose = TRUE
 )
 }
@@ -38,6 +41,9 @@ counts.}
 \item{pm.distr}{statistical distribution for estimating peak mean
 parameters. Available distributions: gamma, weibull, lngamma, pareto.
 Default is weibull.}
+
+\item{method}{to use for simulation. Single for simulating one cell-type or
+groups for simulating distinct cell-types.}
 
 \item{verbose}{logical variable. Prints the simulation progress if TRUE.}
 }
