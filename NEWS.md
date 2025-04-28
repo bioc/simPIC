@@ -1,3 +1,16 @@
+## Version 1.5.3 (2025-04-28)
+* Extended `simPICcountclass` object to include: nGroups, batch, differential
+  accessibility, and bcv parameters.
+* Updated `estimateBCV` function in `simPICestimate`.
+* Updates in `simPICsimulate`:
+  - `simPICsimBatchEffects`
+  - `simPICsimBatchCellMeans`
+  - `simPICsimulatemultiDA`
+  - `simPICsimulateBCVmeans`
+  - `simPICsimulateTrueCountsGroups`
+* Updated vignette to demonstrate new functionality--- multiple cell-types
+* Removed redundancy in citation in `DESCRIPTION`
+
 ## Version 1.5.2 (2025-04-21)
 * Added package logo to vignette.
 

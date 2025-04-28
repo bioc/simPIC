@@ -32,7 +32,7 @@ Add additional feature statistics to a SingleCellExperiment object
 }
 \details{
 Currently adds the following statistics: mean and variance. Statistics
-are added to the \code{\link{rowData}} slot and are named
+are added to the \code{\link[SummarizedExperiment]{rowData}} slot and are named
 \code{Stat[Log]Value[No0]} where \code{Log} and \code{No0} are added if
 those arguments are true.
 }

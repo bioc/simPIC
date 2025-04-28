@@ -4,7 +4,7 @@
 \name{simPIC-package}
 \alias{simPIC}
 \alias{simPIC-package}
-\title{simPIC: simPIC: flexible simulation of paired-insertion counts for single-cell ATAC-sequencing data}
+\title{simPIC: Flexible simulation of paired-insertion counts for single-cell ATAC-sequencing data}
 \description{
 simPIC is a package for simulating single-cell ATAC-seq count data. It provides a user-friendly, well documented interface for data simulation. Functions are provided for parameter estimation, realistic scATAC-seq data simulation, and comparing real and simulated datasets.
 
@@ -28,8 +28,8 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Davis McCarthy
   \item Heejung Shim
+  \item Davis McCarthy
 }
 
 }

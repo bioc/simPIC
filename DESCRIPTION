@@ -1,32 +1,33 @@
 Package: simPIC
-Version: 1.5.2
+Version: 1.5.3
 Date: 2023-02-02
 Type: Package
-Title: simPIC: flexible simulation of paired-insertion counts for single-cell 
+Title: Flexible simulation of paired-insertion counts for single-cell 
         ATAC-sequencing data
 Authors@R: c(person("Sagrika", "Chugh", role=c("aut","cre"), 
            email = "sagrika.chugh@gmail.com", 
            comment = c(ORCID = "0000-0002-8050-5214")),
-           person("Davis","McCarthy", role=c("aut")),
-           person("Heejung","Shim", role=c("aut")))
+           person("Heejung","Shim", role=c("aut")),
+           person("Davis","McCarthy", role=c("aut")))
 Depends: 
-    R (>= 4.4.0),
+    R (>= 4.5.0),
     SingleCellExperiment
 Imports: 
     BiocGenerics,
     checkmate (>= 2.0.0),
     fitdistrplus,
     matrixStats,
+    actuar,
     Matrix,
     stats,
     SummarizedExperiment,
-    actuar,
     rlang,
     S4Vectors,
     methods,
     scales,
     scuttle,
-    edgeR
+    edgeR,
+    withr
 Description: simPIC is a package for simulating single-cell ATAC-seq count data.
     It provides a user-friendly, well documented interface for data simulation.
     Functions are provided for parameter estimation, realistic scATAC-seq data 
@@ -39,7 +40,10 @@ Suggests:
     knitr,
     rmarkdown,
     BiocStyle,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    scater,
+    scran,
+    magick
 VignetteBuilder: knitr
 RoxygenNote: 7.3.1
 Config/testthat/edition: 3

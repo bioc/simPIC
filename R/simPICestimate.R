@@ -310,9 +310,9 @@ simPICEstBCV <- function(counts, object, verbose) {
     # Add dummy design matrix to avoid print statement
     design <- matrix(1, ncol(counts), 1)
     disps <- edgeR::estimateDisp(counts, design = design)
-    bcv.common = -0.3 + 0.15 * disps$common.dispersion
+    bcv.common <- -0.3 + 0.15 * disps$common.dispersion
     
-    bcv.df = disps$prior.df
+    bcv.df <- disps$prior.df
     
     object <- setsimPICparameters(
         object,

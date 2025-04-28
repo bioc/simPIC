@@ -129,7 +129,7 @@ simPICcompare <- function(sces, point.size = 0.2, point.alpha = 0.1,
         ggplot2::scale_fill_manual(values = colours) +
         ggplot2::xlab("") +
         ggplot2::ylab("Peak means") +
-        ggplot2::ggtitle("Distriution of peak means") +
+        ggplot2::ggtitle("Distribution of peak means") +
         plot_theme()
 
     vars <- ggplot2::ggplot(
@@ -284,7 +284,7 @@ simPICcompare <- function(sces, point.size = 0.2, point.alpha = 0.1,
 #'
 #' @details
 #' Currently adds the following statistics: mean and variance. Statistics
-#' are added to the \code{\link{rowData}} slot and are named
+#' are added to the \code{\link[SummarizedExperiment]{rowData}} slot and are named
 #' \code{Stat[Log]Value[No0]} where \code{Log} and \code{No0} are added if
 #' those arguments are true.
 #' @return SingleCellExperiment with additional feature statistics
