@@ -1,3 +1,5 @@
+[![BiocCheck (devel)](https://github.com/sagrikachugh/simPIC/actions/workflows/bioc-check.yaml/badge.svg?branch=devel)](https://github.com/sagrikachugh/simPIC/actions/workflows/bioc-check.yaml?query=branch%3Adevel)
+
 # simPIC
 
 ## Overview
