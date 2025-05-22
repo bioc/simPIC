@@ -1,4 +1,4 @@
-[![BiocCheck (devel)](https://github.com/sagrikachugh/simPIC/actions/workflows/bioc-check.yaml/badge.svg?branch=devel)](https://github.com/sagrikachugh/simPIC/actions/workflows/bioc-check.yaml?query=branch%3Adevel)
+[![R-CMD-check (devel)](https://github.com/sagrikachugh/simPIC/actions/workflows/R-CMD-check.yaml/badge.svg?branch=devel)](https://github.com/sagrikachugh/simPIC/actions/workflows/R-CMD-check.yaml)
 
 # simPIC
 
