@@ -274,10 +274,9 @@ simPICMicrogliaExample <- function(sce = NULL,
         }
 
         comparison.samples <- unique(as.character(comparison.real.sce$Sample))
-        comparison.aggregated <- scuttle::aggregateAcrossCells(
+        comparison.aggregated <- simPICaggregateMeanByGroup(
             comparison.real.sce,
-            ids = comparison.real.sce$sample_batch,
-            statistics = "mean"
+            comparison.real.sce$sample_batch
         )
         comparison.unit.sizes <- sort(table(comparison.real.sce$sample_batch), decreasing = TRUE)
         comparison.big.unit <- names(comparison.unit.sizes)[1]

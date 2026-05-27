@@ -90,7 +90,7 @@ simPICplotPopulationPCA <- function(counts,
     if (verbose) {
         message("Computing log-normalized counts and PCA for cells...")
     }
-    sce <- scuttle::logNormCounts(sce)
+    sce <- simPICaddLogcounts(sce)
     sce <- scater::runPCA(
         sce,
         exprs_values = "logcounts",
@@ -151,10 +151,9 @@ simPICplotPopulationPCA <- function(counts,
         if (verbose) {
             message("Aggregating cells by sample and computing sample-level PCA...")
         }
-        sample.sce <- scuttle::aggregateAcrossCells(
+        sample.sce <- simPICaggregateMeanByGroup(
             sce,
-            ids = SummarizedExperiment::colData(sce)[[sample.col]],
-            statistics = "mean"
+            SummarizedExperiment::colData(sce)[[sample.col]]
         )
         SummarizedExperiment::colData(sample.sce)$Sample <- colnames(sample.sce)
         sample.size.factors <- Matrix::colSums(getCounts(sample.sce))
@@ -166,8 +165,7 @@ simPICplotPopulationPCA <- function(counts,
 
         sample.sce <- sample.sce[, keep.samples, drop = FALSE]
         sample.size.factors <- sample.size.factors[keep.samples]
-        sample.sce <- scuttle::logNormCounts(
-            sample.sce,
+        sample.sce <- simPICaddLogcounts(sample.sce,
             size.factors = sample.size.factors
         )
         sample.ncomp <- min(pca.components, max(2L, ncol(sample.sce) - 1L))
@@ -414,8 +412,8 @@ simPICplotBlusterComparison <- function(real.sce,
         message("Computing Poptrial-style PCA and bluster summaries...")
     }
 
-    real.pca <- scuttle::logNormCounts(simPICfilterZeroLibraryCells(real.sce))
-    sim.pca <- scuttle::logNormCounts(simPICfilterZeroLibraryCells(simulated.sce))
+    real.pca <- simPICaddLogcounts(simPICfilterZeroLibraryCells(real.sce))
+    sim.pca <- simPICaddLogcounts(simPICfilterZeroLibraryCells(simulated.sce))
     real.pca <- scater::runPCA(
         real.pca,
         exprs_values = "logcounts",

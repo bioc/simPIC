@@ -137,6 +137,60 @@ ensureCountsFirst <- function(sce) {
     sce
 }
 
+simPICaggregateMeanByGroup <- function(sce, ids) {
+    checkmate::assertClass(sce, "SingleCellExperiment")
+    checkmate::assertAtomicVector(ids, len = ncol(sce))
+
+    keep <- !is.na(ids) & ids != ""
+    if (!any(keep)) {
+        stop("No cells remain after removing missing aggregation identifiers.")
+    }
+
+    sce <- sce[, keep, drop = FALSE]
+    ids <- factor(ids[keep], levels = unique(ids[keep]))
+    counts <- getCounts(sce)
+    design <- Matrix::sparse.model.matrix(~ 0 + ids)
+    colnames(design) <- levels(ids)
+
+    summed <- counts %*% design
+    group.sizes <- as.numeric(table(ids)[colnames(design)])
+    means <- summed %*% Matrix::Diagonal(x = 1 / group.sizes)
+    rownames(means) <- rownames(sce)
+    colnames(means) <- colnames(design)
+
+    SingleCellExperiment::SingleCellExperiment(
+        assays = list(counts = means),
+        rowData = SummarizedExperiment::rowData(sce)
+    )
+}
+
+simPICaddLogcounts <- function(sce, size.factors = NULL) {
+    checkmate::assertClass(sce, "SingleCellExperiment")
+
+    counts <- getCounts(sce)
+    if (is.null(size.factors)) {
+        lib.size <- Matrix::colSums(counts)
+        positive <- lib.size > 0
+        if (!all(positive)) {
+            stop("All cells must have positive library sizes for normalization.")
+        }
+        size.factors <- lib.size / mean(lib.size)
+    }
+
+    checkmate::assertNumeric(size.factors,
+        len = ncol(sce), lower = 0,
+        any.missing = FALSE, finite = TRUE
+    )
+    if (any(size.factors == 0)) {
+        stop("size.factors must be positive.")
+    }
+
+    logcounts <- log2(counts %*% Matrix::Diagonal(x = 1 / size.factors) + 1)
+    dimnames(logcounts) <- dimnames(sce)
+    SummarizedExperiment::assay(sce, "logcounts") <- logcounts
+    sce
+}
+
 #' Bind rows (matched)
 #'
 #' Bind the rows of two data frames, keeping only the columns that are
@@ -283,11 +337,7 @@ simPICaggregatePeakMeans <- function(sce,
     sce <- sce[, keep.cells, drop = FALSE]
     ids <- ids[keep.cells]
 
-    aggregated <- scuttle::aggregateAcrossCells(
-        sce,
-        ids = ids,
-        statistics = "mean"
-    )
+    aggregated <- simPICaggregateMeanByGroup(sce, ids)
 
     means <- simPICcoerceDenseMatrix(getCounts(aggregated), "means")
     return(means)
@@ -669,11 +719,7 @@ simPICprepareMicrogliaExample <- function(sce,
     big.unit <- names(unit.sizes)[1]
     bigcounts <- sce[, sce$sample_batch == big.unit, drop = FALSE]
 
-    aggregated <- scuttle::aggregateAcrossCells(
-        sce,
-        ids = sce$sample_batch,
-        statistics = "mean"
-    )
+    aggregated <- simPICaggregateMeanByGroup(sce, sce$sample_batch)
 
     keep.samples <- unique(as.character(SummarizedExperiment::colData(sce)$Sample))
     aligned.vcf <- simPICalignVcfToSamples(vcf, sample.map, keep.samples)
