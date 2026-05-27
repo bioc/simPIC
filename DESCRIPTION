@@ -1,9 +1,5 @@
 Package: simPIC
-<<<<<<< HEAD
-Version: 1.7.1
-=======
 Version: 1.9.0
->>>>>>> upstream/devel
 Date: 2023-02-02
 Type: Package
 Title: Flexible simulation of paired-insertion counts for single-cell 
