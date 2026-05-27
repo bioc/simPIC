@@ -2,7 +2,7 @@
 % Please edit documentation in R/simPICsimulate.R
 \name{simPICsimulateTrueCountsGroups}
 \alias{simPICsimulateTrueCountsGroups}
-\title{Simulate true counts groups.}
+\title{Simulate true counts groups}
 \usage{
 simPICsimulateTrueCountsGroups(object, sim)
 }
@@ -15,6 +15,6 @@ simPICsimulateTrueCountsGroups(object, sim)
 SingleCellExperiment object with simulated true counts.
 }
 \description{
-Counts are simulated from a poisson distribution where each peak has a
+Counts are simulated from a Poisson distribution where each peak has a
 mean, expected library size and proportion of accessible chromatin.
 }

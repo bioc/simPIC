@@ -2,7 +2,7 @@
 % Please edit documentation in R/simPICestimate.R
 \name{simPICestimateSparsity}
 \alias{simPICestimateSparsity}
-\title{Estimate sparsity.}
+\title{Estimate sparsity}
 \usage{
 simPICestimateSparsity(norm.counts, object, verbose)
 }
@@ -11,12 +11,12 @@ simPICestimateSparsity(norm.counts, object, verbose)
 
 \item{object}{simPICcount object to store estimated parameters.}
 
-\item{verbose}{logical. To print messages or not.}
+\item{verbose}{Logical. Whether to print progress messages.}
 }
 \value{
 simPICcount object with updated sparsity parameter.
 }
 \description{
-This function estimates the sparsity of cells based on a normalized counts 
-matrix and updates the parameters of a simPIC object accordingly.
+This function estimates cell sparsity from a normalized count matrix and
+updates the parameters of a simPIC object accordingly.
 }

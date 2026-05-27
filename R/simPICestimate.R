@@ -1,7 +1,7 @@
 #' Estimate simPIC simulation parameters
 #'
 #' Estimate simulation parameters for library size, peak means, and sparsity
-#' for simPIC simulation from a real peak by cell input matrix
+#' from a real peak-by-cell input matrix.
 #'
 #' @param counts either a sparse peak by cell count matrix, or a
 #'        SingleCellExperiment object containing count data to estimate
@@ -10,21 +10,21 @@
 #'        counts.
 #' @param pm.distr statistical distribution for estimating peak mean
 #'        parameters. Available distributions: gamma, weibull, lngamma, pareto.
-#'        Default is weibull.
-#' @param method to use for simulation. Single for simulating one cell-type or
-#'        groups for simulating distinct cell-types.           
+#'        Default is lngamma.
+#' @param method Simulation mode. Use \code{"single"} to estimate parameters
+#'        for one cell type or \code{"groups"} for distinct cell types.
 #' @param verbose logical variable. Prints the simulation progress if TRUE.
 #'
 #' @return simPICcount object containing all estimated parameters.
 #' @examples
 #' counts <- readRDS(system.file("extdata", "test.rds", package = "simPIC"))
 #' est <- newsimPICcount()
-#' est <- simPICestimate(counts, pm.distr = "weibull")
+#' est <- simPICestimate(counts, pm.distr = "lngamma")
 #' @export
 simPICestimate <- function(counts,
                         object = newsimPICcount(),
                         pm.distr = c(
-                        "gamma", "weibull", "pareto", "lngamma"
+                        "lngamma", "gamma", "weibull", "pareto"
                         ),
                         method = c("single","groups"),
                         verbose = TRUE) {
@@ -36,7 +36,7 @@ simPICestimate <- function(counts,
 #' @export
 simPICestimate.SingleCellExperiment <- function(counts,
                                                 object = newsimPICcount(),
-                                                pm.distr = "weibull",
+                                                pm.distr = "lngamma",
                                                 method = "single",
                                                 verbose = TRUE) {
     checkmate::assert_choice(pm.distr, c(
@@ -45,7 +45,13 @@ simPICestimate.SingleCellExperiment <- function(counts,
     ))
     checkmate::assert_choice(method, c("single", "groups"))
     counts <- getCounts(counts)
-    simPICestimate(counts, object, pm.distr, method)
+    simPICestimate(
+        counts,
+        object = object,
+        pm.distr = pm.distr,
+        method = method,
+        verbose = verbose
+    )
 }
 
 #' @rdname simPICestimate
@@ -54,7 +60,7 @@ simPICestimate.SingleCellExperiment <- function(counts,
 #' @export
 simPICestimate.dgCMatrix <- function(counts,
                             object = newsimPICcount(),
-                            pm.distr = "weibull",
+                            pm.distr = "lngamma",
                             method = "single",
                             verbose = TRUE) {
     checkmate::assertClass(object, "simPICcount")
@@ -67,8 +73,8 @@ simPICestimate.dgCMatrix <- function(counts,
     object <- setsimPICparameters(object,
         nPeaks = nrow(counts),
         nCells = ncol(counts),
-        batchCells = ncol(counts)
-        
+        batchCells = ncol(counts),
+        pm.distr = pm.distr
     )
 
     counts <- counts[, which(colSums(counts) != 0), drop=FALSE]
@@ -87,12 +93,16 @@ simPICestimate.dgCMatrix <- function(counts,
     if (verbose) {
         message("simPIC is:")
         message("estimating library size parameters...")
-        object <- simPICestimateLibSize(counts, object, verbose)
-        message("estimating sparsity...")
-        object <- simPICestimateSparsity(counts, object, verbose)
-        message("estimating peak mean parameters...")
-        object <- simPICestimatePeakMean(norm.counts, object, pm.distr, verbose)
     }
+    object <- simPICestimateLibSize(counts, object, verbose)
+    if (verbose) {
+        message("estimating sparsity...")
+    }
+    object <- simPICestimateSparsity(counts, object, verbose)
+    if (verbose) {
+        message("estimating peak mean parameters...")
+    }
+    object <- simPICestimatePeakMean(norm.counts, object, pm.distr, verbose)
     
     if(method == "groups")
     {
@@ -102,13 +112,13 @@ simPICestimate.dgCMatrix <- function(counts,
     return(object)
 }
 
-#' Estimate simPIC library size parameters.
+#' Estimate simPIC library size parameters
 #'
 #' Estimate the library size parameters for simPIC simulation.
 #'
 #' @param counts count matrix.
 #' @param object simPICcount object to store estimated values.
-#' @param verbose logical. To print messages or not.
+#' @param verbose Logical. Whether to print progress messages.
 #'
 #' @details
 #' Parameters for the lognormal distribution are estimated by fitting the
@@ -140,7 +150,7 @@ simPICestimateLibSize <- function(counts, object, verbose) {
 #'
 #' @param data The data to fit.
 #' @param distr Name of the distribution to fit.
-#' @param verbose logical. To print messages or not.
+#' @param verbose Logical. Whether to print progress messages.
 #'
 #' @details
 #' The distribution is fitted to the data using each of the
@@ -185,15 +195,15 @@ selectFit <- function(data, distr, verbose = TRUE) {
     return(fits[[selected]])
 }
 
-#' Estimate sparsity.
+#' Estimate sparsity
 #'
-#'This function estimates the sparsity of cells based on a normalized counts 
-#'matrix and updates the parameters of a simPIC object accordingly.
+#' This function estimates cell sparsity from a normalized count matrix and
+#' updates the parameters of a simPIC object accordingly.
 #'
 #'
 #' @param norm.counts A normalized count matrix to estimate parameters from.
 #' @param object simPICcount object to store estimated parameters.
-#' @param verbose logical. To print messages or not.
+#' @param verbose Logical. Whether to print progress messages.
 #'
 #' @return simPICcount object with updated sparsity parameter.
 #'
@@ -210,20 +220,19 @@ simPICestimateSparsity <- function(norm.counts, object, verbose) {
 #'
 #' Estimate peak mean parameters for simPIC simulation
 #'
-#' @param norm.counts library size normalised counts matrix.
+#' @param norm.counts Library-size normalized count matrix.
 #' @param object simPICcount object to store estimated values.
 #' @param pm.distr distribution parameter for peak means.
-#' @param verbose logical. To print progress messages or not.
+#' @param verbose Logical. Whether to print progress messages.
 #'
 #' @details
 #' Parameters for gamma distribution are estimated by fitting the mean
-#' normalised counts using \code{\link[fitdistrplus]{fitdist}}.
+#' normalized counts using \code{\link[fitdistrplus]{fitdist}}.
 #' All the fitting methods are tried and the fit with the best Cramer-von
 #' Mises statistic is selected.
 #' @return simPICcount object containing all estimated parameters
 #' @importFrom Matrix rowMeans
 #' @importFrom stats sd
-#' @importFrom actuar dpareto ppareto
 simPICestimatePeakMean <- function(norm.counts, object, pm.distr, verbose) {
     logical_matrix <- norm.counts != 0
     norm.counts <- norm.counts * logical_matrix
@@ -251,9 +260,33 @@ simPICestimatePeakMean <- function(norm.counts, object, pm.distr, verbose) {
             )
         },
         pareto = {
-            fit <- fitdistrplus::fitdist(peak.means, "pareto",
-                start = list(shape = 1.3, scale = 0.05), 
-                control = list(maxit = 1000)
+            fit <- with_fitdist_bindings(
+                list(
+                    dpareto = function(x, shape, scale, log = FALSE) {
+                        actuar::dpareto(
+                            x,
+                            shape = shape,
+                            scale = scale,
+                            log = log
+                        )
+                    },
+                    ppareto = function(q, shape, scale, lower.tail = TRUE,
+                                       log.p = FALSE) {
+                        actuar::ppareto(
+                            q,
+                            shape = shape,
+                            scale = scale,
+                            lower.tail = lower.tail,
+                            log.p = log.p
+                        )
+                    }
+                ),
+                fitdistrplus::fitdist(
+                    peak.means,
+                    "pareto",
+                    start = list(shape = 1.3, scale = 0.05),
+                    control = list(maxit = 1000)
+                )
             )
             peak.mean.shape <- unname(fit$estimate["shape"])
             peak.mean.scale <- unname(fit$estimate["scale"])
@@ -263,11 +296,38 @@ simPICestimatePeakMean <- function(norm.counts, object, pm.distr, verbose) {
             )
         },
         lngamma = {
-            fit <- fitdistrplus::fitdist(peak.means, "lngamma",
-                optim.method = "BFGS",
-                start = list(pi = 0, shape = 0, rate = 0, meanlog = 0, 
-                            sdlog = 1),
-                control = list(maxit = 1000)
+            fit <- with_fitdist_bindings(
+                list(
+                    dlngamma = function(x, pi, shape, rate, meanlog, sdlog) {
+                        get("dlngamma", envir = environment(simPICestimatePeakMean))(
+                            x,
+                            pi = pi,
+                            shape = shape,
+                            rate = rate,
+                            meanlog = meanlog,
+                            sdlog = sdlog
+                        )
+                    },
+                    plngamma = function(q, pi, shape, rate, meanlog, sdlog) {
+                        get("plngamma", envir = environment(simPICestimatePeakMean))(
+                            q,
+                            pi = pi,
+                            shape = shape,
+                            rate = rate,
+                            meanlog = meanlog,
+                            sdlog = sdlog
+                        )
+                    }
+                ),
+                fitdistrplus::fitdist(
+                    peak.means,
+                    "lngamma",
+                    optim.method = "BFGS",
+                    start = list(
+                        pi = 0, shape = 0, rate = 0, meanlog = 0, sdlog = 1
+                    ),
+                    control = list(maxit = 1000)
+                )
             )
             peak.mean.pi <- unname(fit$estimate["pi"])
             peak.mean.shape <- unname(fit$estimate["shape"])
@@ -287,6 +347,27 @@ simPICestimatePeakMean <- function(norm.counts, object, pm.distr, verbose) {
     return(object)
 }
 
+with_fitdist_bindings <- function(bindings, expr) {
+    eval_expr <- substitute(expr)
+    search_name <- paste0(
+        "simPIC_fitdist_",
+        as.integer(stats::runif(1, min = 1, max = 1e9))
+    )
+    base_attach <- get("attach", envir = baseenv())
+    base_attach(
+        list2env(bindings, parent = emptyenv()),
+        name = search_name,
+        warn.conflicts = FALSE
+    )
+    on.exit({
+        search_pos <- match(search_name, search())
+        if (!is.na(search_pos)) {
+            detach(pos = search_pos)
+        }
+    }, add = TRUE)
+    eval(eval_expr, envir = parent.frame())
+}
+
 #' Estimate simPIC Biological Coefficient of Variation parameters
 #'
 #' Parameters are estimated using the \code{\link[edgeR]{estimateDisp}} function
@@ -294,14 +375,14 @@ simPICestimatePeakMean <- function(norm.counts, object, pm.distr, verbose) {
 #'
 #' @param counts counts matrix to estimate parameters from.
 #' @param object simPICcount object to store estimated values in.
-#' @param verbose logical. To print progress messages or not.
+#' @param verbose Logical. Whether to print progress messages.
 #'
 #' @details
 #' The \code{\link[edgeR]{estimateDisp}} function is used to estimate the common
 #' dispersion and prior degrees of freedom. See
 #' \code{\link[edgeR]{estimateDisp}} for details. When estimating parameters on
 #' simulated data we found a broadly linear relationship between the true
-#' underlying common dispersion and the \code{edgR} estimate, therefore we
+#' underlying common dispersion and the \code{edgeR} estimate, therefore we
 #' apply a small correction, \code{disp = -0.3 + 0.15 * edgeR.disp}.
 #'
 #' @return simPICcount object with estimated values.

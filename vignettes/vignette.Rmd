@@ -98,7 +98,7 @@ pic_mat <- PIC_counting(
 
 # simPIC simulation
 
-The core of the simPIC simulation framework is a `gamma-Poisson model`, which generates a uniform peak-by-cell count matrix reflecting chromatin accessibility. Mean accessibility values for each peak are drawn from a `Weibull` distribution by default, though users can optionally choose from `gamma`, `lognormal-gamma`, or `pareto` distributions to better match the characteristics of their data.
+The core of the simPIC simulation framework is a `gamma-Poisson model`, which generates a uniform peak-by-cell count matrix reflecting chromatin accessibility. Mean accessibility values for each peak are drawn from a `lognormal-gamma` distribution by default, though users can optionally choose from `gamma`, `weibull`, or `pareto` distributions to better match the characteristics of their data.
 
 Each cell is assigned an expected library size, simulated using a `log-normal` distribution to mimic real datasets. Finally, sparsity is introduced by applying a `Bernoulli` distribution to counts simulated using `Poisson` distribution, capturing the high sparsity nature of single-cell ATAC-seq data.
 
@@ -154,7 +154,7 @@ simPIC enables the estimation of its parameters from a SingleCellExperiment obje
 
 In this section, we estimate parameters from a counts matrix using the default settings. The estimation process involves the following steps:
 
--  Estimating mean parameters by fitting a Weibull distribution (default) to the peak means.
+-  Estimating mean parameters by fitting a lognormal-gamma distribution (default) to the peak means.
 
 -  Estimating library size parameters by fitting a log-normal distribution to the library sizes.
 
@@ -179,6 +179,9 @@ new <- simPICestimate(counts)
 
 ## estimating using gamma distribution
 ## new <- simPICestimate(counts, pm.distr = "gamma")
+
+## estimating using weibull distribution
+## new <- simPICestimate(counts, pm.distr = "weibull")
 ```
 
 For more details on the estimation procedures, refer to `?simPICestimate`.
@@ -193,6 +196,9 @@ sim
 
 ## simulating using gamma distribution
 ## sim <- simPICsimulate(new, nCells =500, pm.distr = "gamma")
+
+## simulating using weibull distribution
+## sim <- simPICsimulate(new, nCells =500, pm.distr = "weibull")
 ```
 
 The output of `simPICsimulate` is a `SingleCellExperiment` object, where `sim` contains `r nrow(sim)` features (peaks) and `r ncol(sim)` samples (cells). The main component of this object is a matrix of simulated counts, organized by features (peaks) and samples (cells), which can be accessed using the `counts` function. In addition, the `SingleCellExperiment` object stores metadata for each cell (accessible via `colData`) and each peak (accessible via `rowData`). simPIC uses these slots, along with `assays`, to store intermediate values during the simulation process.

@@ -1,5 +1,5 @@
 Package: simPIC
-Version: 1.5.3
+Version: 1.5.4
 Date: 2023-02-02
 Type: Package
 Title: Flexible simulation of paired-insertion counts for single-cell 
@@ -9,6 +9,10 @@ Authors@R: c(person("Sagrika", "Chugh", role=c("aut","cre"),
            comment = c(ORCID = "0000-0002-8050-5214")),
            person("Heejung","Shim", role=c("aut")),
            person("Davis","McCarthy", role=c("aut")))
+Author: Sagrika Chugh [aut, cre] (<https://orcid.org/0000-0002-8050-5214>),
+    Heejung Shim [aut],
+    Davis McCarthy [aut]
+Maintainer: Sagrika Chugh <sagrika.chugh@gmail.com>
 Depends: 
     R (>= 4.5.0),
     SingleCellExperiment
@@ -23,6 +27,7 @@ Imports:
     SummarizedExperiment,
     rlang,
     S4Vectors,
+    GenomeInfoDb,
     methods,
     scales,
     scuttle,
@@ -36,6 +41,7 @@ biocViews: SingleCell, ATACSeq, Software, Sequencing, ImmunoOncology, DataImport
 License: GPL-3
 Encoding: UTF-8
 Suggests: 
+    bluster,
     ggplot2 (>= 3.4.0),
     knitr,
     rmarkdown,
@@ -43,7 +49,12 @@ Suggests:
     testthat (>= 3.0.0),
     scater,
     scran,
-    magick
+    magick,
+    splatter,
+    VariantAnnotation,
+    IRanges,
+    GenomicRanges,
+    preprocessCore
 VignetteBuilder: knitr
 RoxygenNote: 7.3.1
 Config/testthat/edition: 3

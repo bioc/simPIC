@@ -41,11 +41,43 @@ test_that("simPICestimate works with gamma distribution", {
   expect_true(validObject(object))
 })
 
+test_that("simPICestimate estimates pareto parameters with verbose FALSE", {
+  object <- simPICestimate(counts, pm.distr = "pareto", verbose = FALSE)
+  defaults <- newsimPICcount()
+
+  expect_true(validObject(object))
+  expect_identical(object@pm.distr, "pareto")
+  expect_false(isTRUE(all.equal(object@peak.mean.shape, defaults@peak.mean.shape)))
+  expect_false(isTRUE(all.equal(object@peak.mean.scale, defaults@peak.mean.scale)))
+})
+
+test_that("simPICestimate estimates lngamma parameters with verbose FALSE", {
+  object <- simPICestimate(counts, pm.distr = "lngamma", verbose = FALSE)
+  defaults <- newsimPICcount()
+
+  expect_true(validObject(object))
+  expect_identical(object@pm.distr, "lngamma")
+  expect_false(isTRUE(all.equal(object@peak.mean.pi, defaults@peak.mean.pi)))
+  expect_false(isTRUE(all.equal(object@peak.mean.meanlog, defaults@peak.mean.meanlog)))
+  expect_false(isTRUE(all.equal(object@peak.mean.sdlog, defaults@peak.mean.sdlog)))
+})
+
 test_that("simPICestimate works with SingleCellExperiment", {
   sce <- SingleCellExperiment::SingleCellExperiment(
     assays = list(counts = counts)
   )
   object <- simPICestimate(sce, pm.distr = "weibull")
+  expect_true(validObject(object))
+})
+
+test_that("simPICestimate SingleCellExperiment honours verbose FALSE", {
+  sce <- SingleCellExperiment::SingleCellExperiment(
+    assays = list(counts = counts)
+  )
+
+  object <- simPICestimate(sce, pm.distr = "pareto", verbose = FALSE)
+
+  expect_identical(object@pm.distr, "pareto")
   expect_true(validObject(object))
 })
 

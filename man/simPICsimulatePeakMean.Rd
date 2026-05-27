@@ -2,7 +2,7 @@
 % Please edit documentation in R/simPICsimulate.R
 \name{simPICsimulatePeakMean}
 \alias{simPICsimulatePeakMean}
-\title{Simulate simPIC peak means.}
+\title{Simulate simPIC peak means}
 \usage{
 simPICsimulatePeakMean(object, sim, pm.distr, verbose)
 }
@@ -13,7 +13,7 @@ simPICsimulatePeakMean(object, sim, pm.distr, verbose)
 
 \item{pm.distr}{distribution parameter for peak means.
 Available distributions: gamma, weibull, lngamma, pareto.
-Default is weibull.}
+Default is lngamma.}
 
 \item{verbose}{logical. Whether to print progress messages.}
 }

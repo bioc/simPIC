@@ -11,7 +11,7 @@ simPICEstBCV(counts, object, verbose)
 
 \item{object}{simPICcount object to store estimated values in.}
 
-\item{verbose}{logical. To print progress messages or not.}
+\item{verbose}{Logical. Whether to print progress messages.}
 }
 \value{
 simPICcount object with estimated values.
@@ -25,6 +25,6 @@ The \code{\link[edgeR]{estimateDisp}} function is used to estimate the common
 dispersion and prior degrees of freedom. See
 \code{\link[edgeR]{estimateDisp}} for details. When estimating parameters on
 simulated data we found a broadly linear relationship between the true
-underlying common dispersion and the \code{edgR} estimate, therefore we
+underlying common dispersion and the \code{edgeR} estimate, therefore we
 apply a small correction, \code{disp = -0.3 + 0.15 * edgeR.disp}.
 }

@@ -33,12 +33,17 @@ some basic plots comparing them.
 }
 \details{
 The returned list has three items:
+The first dataset in \code{sces} is treated as the reference dataset when
+computing Kolmogorov-Smirnov (KS) summaries.
 
 \describe{
    \item{\code{RowData}}{Combined row data from the provided
    SingleCellExperiments.}
    \item{\code{ColData}}{Combined column data from the provided
    SingleCellExperiments.}
+   \item{\code{KS}}{Data frame summarizing KS statistics for peak means,
+   library sizes, and cell sparsity, comparing each dataset to the first
+   dataset in \code{sces}.}
    \item{\code{Plots}}{Comparison plots
        \describe{
            \item{\code{Means}}{Boxplot of mean distribution.}

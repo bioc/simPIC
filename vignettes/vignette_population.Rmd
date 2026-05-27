@@ -1,0 +1,228 @@
+---
+title: "simPIC Microglia Population Example"
+author: "Sagrika Chugh"
+package: simPIC
+date: "`r Sys.Date()`"
+output:
+  BiocStyle::html_document:
+    toc: true
+    toc_float: true
+vignette: >
+  \usepackage[utf8]{inputenc}
+  %\VignetteIndexEntry{simPIC Microglia Population Example}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options:
+  markdown:
+    wrap: 80
+---
+
+```{r knitr-options, echo = FALSE, message = FALSE, warning = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+# Overview
+
+This vignette shows the packaged Microglia example for population-scale
+simulation with genetic effects inside `simPIC`. The example uses reusable
+`extdata` files so the workflow can be rerun without rebuilding intermediate
+objects. The comparison plots follow the later `Poptrial.Rmd` pattern by using
+`bluster` to compare PCA structure, silhouette widths, and neighborhood purity
+between real and simulated cells.
+
+The example follows the splatPop estimation pattern:
+
+- use a prebuilt `SingleCellExperiment` with `Sample`, `Library`, `Batch`, and
+  `sample_batch` metadata
+- aggregate donor-batch means across retained units
+- estimate splatPop parameters from a high-cell donor-batch subset (`bigcounts`)
+- simulate population-scale peak accessibility from aligned Microglia peaks and
+  donors
+
+The first part provides a quick start for running the packaged example. The
+second part examines the returned objects in more detail and relates them to
+the splatPop-style estimation strategy.
+
+```{r setup}
+suppressPackageStartupMessages({
+    library(simPIC)
+    library(SingleCellExperiment)
+})
+```
+
+# Packaged example data
+
+The Microglia example ships with:
+
+- `microglia_sce.rds`
+- `microglia_sample_map.tsv`
+- `microglia_peak_annot_chr14.tsv`
+- `microglia_chr14.vcf`
+
+The canonical starting point is `microglia_sce.rds`, which already stores the
+Microglia counts and cell metadata in a package-ready
+`SingleCellExperiment` object.
+
+```{r extdata}
+extdir.candidates <- c(
+    file.path("inst", "extdata"),
+    file.path("..", "inst", "extdata"),
+    system.file("extdata", package = "simPIC")
+)
+extdir <- extdir.candidates[
+    file.exists(file.path(extdir.candidates, "microglia_sce.rds"))
+][1]
+stopifnot(!is.na(extdir), nzchar(extdir), dir.exists(extdir))
+list.files(extdir, pattern = "^microglia")
+```
+
+```{r sce-summary}
+microglia_sce <- readRDS(file.path(extdir, "microglia_sce.rds"))
+microglia_sce
+head(colData(microglia_sce)[, c("Sample", "Library", "Batch", "sample_batch", "Pathology")])
+peak.cols <- intersect(
+    c("seqnames", "start", "end", "peak_id", "original_peakid"),
+    colnames(rowData(microglia_sce))
+)
+head(rowData(microglia_sce)[, peak.cols])
+```
+
+# Quick Start
+
+The high-level wrapper runs the packaged example end to end. For this vignette,
+the compact packaged data use a small number of donor-batch units and chr14
+peaks so the workflow can run during package checks.
+
+```{r run-example, message = FALSE, warning = FALSE}
+microglia_out <- simPICMicrogliaExample(
+    min.cells = 20,
+    pop.cv.bins = 10,
+    eqtl.n = 0.05,
+    similarity.scale = 2,
+    eqtl.dist = 1e8,
+    sparsify = FALSE,
+    pca.ntop = 100,
+    pca.components = 5,
+    plot.n.samples = 4,
+    seed = 101,
+    verbose = TRUE
+)
+```
+
+```{r inspect-example}
+names(microglia_out)
+microglia_out$plot_samples
+microglia_out$params
+microglia_out$sim
+```
+
+# Quick-Start Plots
+
+The workflow returns both general PCA summaries and Poptrial-style comparison
+plots for the selected library-specific subset.
+
+```{r plots, fig.width = 11, fig.height = 7}
+microglia_out$plots$comparison$cell_pca_by_sample
+microglia_out$plots$comparison$sample_pca
+
+microglia_out$plots$bluster$cell_pca_by_sample
+microglia_out$plots$bluster$silhouette_width
+microglia_out$plots$bluster$neighborhood_purity
+```
+
+# Detailed Look
+
+`simPICMicrogliaExample()` is a packaged example wrapper around the lower-level
+splatPop-style estimation and simulation helpers. It starts from
+`microglia_sce.rds`, prepares the data for estimation and simulation, and
+constructs the comparison subsets used in the diagnostic plots.
+
+The most important returned components are:
+
+- `sce`: the filtered real-data `SingleCellExperiment` used for the main
+  population-scale workflow
+- `bigcounts`: the real donor-batch unit with the most cells, used for the
+  count-based part of parameter estimation
+- `aggregated`: donor-batch aggregated means used for the population-scale
+  component of estimation
+- `params`: the estimated `SplatPopParams`
+- `sim`: the simulated `SingleCellExperiment`
+- `comparison_real` and `comparison_sim`: optional library-specific real and
+  simulated objects when a comparison subset is requested
+
+```{r object-summary}
+names(microglia_out)
+dim(microglia_out$sce)
+dim(microglia_out$bigcounts)
+dim(microglia_out$aggregated)
+dim(microglia_out$sim)
+dim(microglia_out$comparison_real)
+dim(microglia_out$comparison_sim)
+```
+
+# Why `bigcounts`?
+
+The Microglia workflow follows the splatPop estimation pattern:
+
+- aggregated donor-batch means capture the population-scale structure
+- a single high-cell donor-batch subset provides the count-based information
+  for single-cell estimation
+
+Accordingly, `bigcounts` is not an arbitrary subset. It is the largest retained
+`sample_batch` unit in the filtered real data, and it is paired with
+`aggregated` during parameter estimation.
+
+```{r bigcounts-details}
+microglia_out$bigcounts
+table(microglia_out$bigcounts$sample_batch)
+table(microglia_out$bigcounts$Sample)
+```
+
+# Plotting Subset
+
+The default plotting panels use the most abundant retained samples in the
+compact example. A specific library or pathology subset can be requested with
+`comparison.batch` and `comparison.pathology` when the input data include the
+desired groups.
+
+```{r comparison-summary}
+microglia_out$plot_samples
+table(microglia_out$sce$Sample)
+if ("Sample" %in% colnames(colData(microglia_out$sim))) {
+    table(colData(microglia_out$sim)$Sample)
+}
+```
+
+# Interpreting The Plots
+
+The returned plots address slightly different questions:
+
+- `plots$bluster$cell_pca_by_sample`: whether the real and simulated library
+  show similar sample-level structure in PCA space
+- `plots$bluster$silhouette_width`: how well cells are separated by sample
+  within the selected library
+- `plots$bluster$neighborhood_purity`: how pure local neighborhoods are with
+  respect to sample labels
+- `plots$comparison`: simple side-by-side PCA panels
+
+The `plots$bluster` set is the closest to the manuscript-style Figure 6
+comparison and is the most useful starting point for assessing whether the
+simulated data recover the corresponding real-data structure.
+
+# Notes
+
+- This example is intentionally focused on donor- and batch-aware population
+  simulation.
+- Pathology is not used in the core population estimation and simulation model,
+  but it can be used to define a comparison subset when the packaged or
+  user-supplied data contain the desired pathology groups.
+- The packaged chr14 peak annotation is treated as the peak-level source of
+  truth for the example.
+- The packaged example SCE preserves the original `Library` and `Pathology`
+  labels from the reference Microglia object so larger user-supplied examples
+  can request focused comparison panels.
+
+# Session information {.unnumbered}
+
+```{r sessionInfo}
+sessionInfo()
+```

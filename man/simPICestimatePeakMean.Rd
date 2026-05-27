@@ -7,13 +7,13 @@
 simPICestimatePeakMean(norm.counts, object, pm.distr, verbose)
 }
 \arguments{
-\item{norm.counts}{library size normalised counts matrix.}
+\item{norm.counts}{Library-size normalized count matrix.}
 
 \item{object}{simPICcount object to store estimated values.}
 
 \item{pm.distr}{distribution parameter for peak means.}
 
-\item{verbose}{logical. To print progress messages or not.}
+\item{verbose}{Logical. Whether to print progress messages.}
 }
 \value{
 simPICcount object containing all estimated parameters
@@ -23,7 +23,7 @@ Estimate peak mean parameters for simPIC simulation
 }
 \details{
 Parameters for gamma distribution are estimated by fitting the mean
-normalised counts using \code{\link[fitdistrplus]{fitdist}}.
+normalized counts using \code{\link[fitdistrplus]{fitdist}}.
 All the fitting methods are tried and the fit with the best Cramer-von
 Mises statistic is selected.
 }

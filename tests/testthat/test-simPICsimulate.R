@@ -54,6 +54,16 @@ test_that("simPICsimulate function works correctly with pareto", {
   expect_true(inherits(sim_result, "SingleCellExperiment"))
 })
 
+test_that("simPICsimulate returns counts as the first assay", {
+  sim_result <- simPICsimulate(verbose = FALSE)
+  expect_identical(SummarizedExperiment::assayNames(sim_result)[1], "counts")
+})
+
+test_that("simPICsimulate stores the selected peak-mean distribution", {
+  sim_result <- simPICsimulate(pm.distr = "lngamma", verbose = FALSE)
+  expect_identical(S4Vectors::metadata(sim_result)$Params@pm.distr, "lngamma")
+})
+
 test_that("nGroups is 1, switching to default mode", {
   params <- newsimPICcount()
   expect_warning(

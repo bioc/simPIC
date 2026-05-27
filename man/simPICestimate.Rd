@@ -9,7 +9,7 @@
 simPICestimate(
   counts,
   object = newsimPICcount(),
-  pm.distr = c("gamma", "weibull", "pareto", "lngamma"),
+  pm.distr = c("lngamma", "gamma", "weibull", "pareto"),
   method = c("single", "groups"),
   verbose = TRUE
 )
@@ -17,7 +17,7 @@ simPICestimate(
 \method{simPICestimate}{SingleCellExperiment}(
   counts,
   object = newsimPICcount(),
-  pm.distr = "weibull",
+  pm.distr = "lngamma",
   method = "single",
   verbose = TRUE
 )
@@ -25,7 +25,7 @@ simPICestimate(
 \method{simPICestimate}{dgCMatrix}(
   counts,
   object = newsimPICcount(),
-  pm.distr = "weibull",
+  pm.distr = "lngamma",
   method = "single",
   verbose = TRUE
 )
@@ -40,10 +40,10 @@ counts.}
 
 \item{pm.distr}{statistical distribution for estimating peak mean
 parameters. Available distributions: gamma, weibull, lngamma, pareto.
-Default is weibull.}
+Default is lngamma.}
 
-\item{method}{to use for simulation. Single for simulating one cell-type or
-groups for simulating distinct cell-types.}
+\item{method}{Simulation mode. Use \code{"single"} to estimate parameters
+for one cell type or \code{"groups"} for distinct cell types.}
 
 \item{verbose}{logical variable. Prints the simulation progress if TRUE.}
 }
@@ -52,10 +52,10 @@ simPICcount object containing all estimated parameters.
 }
 \description{
 Estimate simulation parameters for library size, peak means, and sparsity
-for simPIC simulation from a real peak by cell input matrix
+from a real peak-by-cell input matrix.
 }
 \examples{
 counts <- readRDS(system.file("extdata", "test.rds", package = "simPIC"))
 est <- newsimPICcount()
-est <- simPICestimate(counts, pm.distr = "weibull")
+est <- simPICestimate(counts, pm.distr = "lngamma")
 }

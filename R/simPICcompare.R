@@ -11,12 +11,17 @@
 #' @param colours vector of colours to use for each dataset.
 #'
 #' @details The returned list has three items:
+#' The first dataset in \code{sces} is treated as the reference dataset when
+#' computing Kolmogorov-Smirnov (KS) summaries.
 #'
 #' \describe{
 #'    \item{\code{RowData}}{Combined row data from the provided
 #'    SingleCellExperiments.}
 #'    \item{\code{ColData}}{Combined column data from the provided
 #'    SingleCellExperiments.}
+#'    \item{\code{KS}}{Data frame summarizing KS statistics for peak means,
+#'    library sizes, and cell sparsity, comparing each dataset to the first
+#'    dataset in \code{sces}.}
 #'    \item{\code{Plots}}{Comparison plots
 #'        \describe{
 #'            \item{\code{Means}}{Boxplot of mean distribution.}
@@ -86,7 +91,7 @@ simPICcompare <- function(sces, point.size = 0.2, point.alpha = 0.1,
         sce <- sces[[name]]
         rowData(sce)$Dataset <- name
         colData(sce)$Dataset <- name
-        colData(sce)$sum <- colSums(assay(sce))
+        colData(sce)$sum <- colSums(BiocGenerics::counts(sce))
         sce <- scuttle::addPerCellQC(sce)
         sce <- scuttle::addPerFeatureQC(sce)
         sce <- addFeatureStats(sce, "counts")
@@ -214,7 +219,7 @@ simPICcompare <- function(sces, point.size = 0.2, point.alpha = 0.1,
             width = 0.8, size = 0.6, alpha = 0.3,
             position = ggplot2::position_dodge2(0.5)
         ) +
-        ggplot2::ylim(50, quantile(features$PctZero, 1)) +
+        ggplot2::ylim(50, quantile(cells$PctZero, 1)) +
         ggplot2::scale_colour_manual(values = colours) +
         ggplot2::scale_fill_manual(values = colours) +
         ggplot2::xlab("") +
@@ -259,8 +264,48 @@ simPICcompare <- function(sces, point.size = 0.2, point.alpha = 0.1,
         pm.nzp <- pm.nzp +
             ggplot2::geom_smooth(method = "gam", formula = y ~ s(x, bs = "cs"))
     }
+    ref.name <- names(sces)[1]
+    ks.metrics <- list(
+        PeakMeans = list(data = features, column = "mean"),
+        LibrarySizes = list(data = cells, column = "sum"),
+        CellSparsity = list(data = cells, column = "PctZero")
+    )
+    ks.summary <- lapply(names(ks.metrics), function(metric.name) {
+        metric <- ks.metrics[[metric.name]]
+        ref.values <- metric$data[metric$data$Dataset == ref.name, metric$column]
+
+        lapply(names(sces), function(dataset.name) {
+            dataset.values <- metric$data[
+                metric$data$Dataset == dataset.name,
+                metric$column
+            ]
+
+            if (dataset.name == ref.name) {
+                return(data.frame(
+                    Metric = metric.name,
+                    Reference = ref.name,
+                    Dataset = dataset.name,
+                    Statistic = 0,
+                    PValue = 1,
+                    stringsAsFactors = FALSE
+                ))
+            }
+
+            ks.out <- suppressWarnings(stats::ks.test(ref.values, dataset.values))
+            data.frame(
+                Metric = metric.name,
+                Reference = ref.name,
+                Dataset = dataset.name,
+                Statistic = unname(ks.out$statistic),
+                PValue = ks.out$p.value,
+                stringsAsFactors = FALSE
+            )
+        })
+    })
+    ks.summary <- do.call(rbind, unlist(ks.summary, recursive = FALSE))
+
     comparison <- list(
-        RowData = features, ColData = cells,
+        RowData = features, ColData = cells, KS = ks.summary,
         Plots = list(
             Means = means, Variances = vars, MeanVar = mean.var,
             LibrarySizes = libs, ZerosPeak = z.peak, ZerosCell = z.cell,
@@ -340,7 +385,7 @@ plot_theme <- function() {
         panel.grid = ggplot2::element_blank(),
         panel.border = ggplot2::element_rect(
             color = "black", fill = NA,
-            size = 1
+            linewidth = 1
         ),
         panel.background = ggplot2::element_blank(),
         plot.background = ggplot2::element_blank(),

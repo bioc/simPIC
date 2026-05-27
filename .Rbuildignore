@@ -1,5 +1,11 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^\.DS_Store$
+^\.Rhistory$
+^\.gitignore$
 ^doc$
 ^Meta$
 ^\.github$
+^benchmark$
+^.*\.DS_Store$
+^.*\.Rhistory$

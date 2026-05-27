@@ -2,7 +2,7 @@
 % Please edit documentation in R/simPICestimate.R
 \name{simPICestimateLibSize}
 \alias{simPICestimateLibSize}
-\title{Estimate simPIC library size parameters.}
+\title{Estimate simPIC library size parameters}
 \usage{
 simPICestimateLibSize(counts, object, verbose)
 }
@@ -11,7 +11,7 @@ simPICestimateLibSize(counts, object, verbose)
 
 \item{object}{simPICcount object to store estimated values.}
 
-\item{verbose}{logical. To print messages or not.}
+\item{verbose}{Logical. Whether to print progress messages.}
 }
 \value{
 simPICcount object with estimated library size parameters.

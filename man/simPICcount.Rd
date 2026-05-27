@@ -9,9 +9,9 @@
 a simPIC class object.
 The parameters not shown in brackets can be estimated from real data
 using \code{\link{simPICestimate}}. For details of the simPIC simulation
-see \code{\link{simPICsimulate}}. The default parameters are based on PBMC10k
-dataset and can be reproduced using test data and script provided in 
-inst/script
+see \code{\link{simPICsimulate}}. The default parameters are based on the
+PBMC10k dataset and can be reproduced using the test data and script
+provided in \code{inst/scripts}.
 }
 \description{
 S4 class that holds parameters for simPIC simulation.
@@ -23,8 +23,8 @@ simPIC simulation parameters:
     \item{\code{nPeaks}}{The number of peaks to simulate.}
     \item{\code{nCells}}{The number of cells to simulate.}
     \item{\code{[seed]}}{Seed to use for generating random numbers.}
-    \item{\code{[default]}}{The logical variable whether to use default
-    parameters (TRUE) or learn from data (FALSE)}
+    \item{\code{[default]}}{Logical value indicating whether to use default
+    parameters (TRUE) or learn parameters from data (FALSE).}
     \item{\emph{Library size parameters}}{
         \describe{
             \item{\code{lib.size.meanlog}}{meanlog (location) parameter
@@ -43,9 +43,8 @@ simPIC simulation parameters:
 }
      \item{\emph{Cell sparsity parameters}}{
         \describe{
-            \item{\code{sparsity}}{probability of openness to be
- multiplied to the input of poisson distribution to generate final
- simulated matrix.}
+            \item{\code{sparsity}}{Probability that contributes to the
+            sparsity of the final simulated matrix.}
  }
 }
 }

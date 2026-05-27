@@ -1,16 +1,15 @@
 #' simPIC simulation
 #'
-#' Simulate peak by cell count matrix from a sparse single-cell ATAC-seq
-#' peak by cell input using simPIC methods.
+#' Simulate a peak-by-cell count matrix using simPIC methods.
 #'
 #' @param object simPICcount object with simulation parameters.
 #' See \code{\link{simPICcount}} for details.
 #' @param pm.distr distribution parameter for peak means.
 #' Available distributions: gamma, weibull, lngamma, pareto.
-#' Default is weibull.
-#' @param method to use for simulation. Single for simulating one cell-type or
-#'        groups for simulating distinct cell-types.
-#' @param verbose logical variable. Prints the simulation progress if TRUE.
+#' Default is lngamma.
+#' @param method Simulation mode. Use \code{"single"} to simulate one cell type
+#'        or \code{"groups"} to simulate distinct cell types.
+#' @param verbose Logical. Whether to print progress messages.
 #' @param ... Any additional parameter settings to override what is provided
 #'        in \code{simPICcount} object.
 #'
@@ -21,7 +20,7 @@
 #' \code{simPICcount} object parameters by calling
 #' \code{\link{setsimPICparameters}}.
 #'
-#'  The simulation involves following steps:
+#'  The simulation involves the following steps:
 #'  \enumerate{
 #'  \item Set up simulation parameters
 #'  \item Set up SingleCellExperiment object
@@ -34,20 +33,19 @@
 #' The final output is a
 #' \code{\link[SingleCellExperiment]{SingleCellExperiment}} object that
 #' contains the simulated count matrix. The parameters are stored in the
-#' \code{\link[SummarizedExperiment]{colData}} (for cell specific information),
-#' \code{\link[SummarizedExperiment]{rowData}} (for peak specific information) or
-#' \code{\link[SummarizedExperiment]{assays}} (for peak by cell matrix) slots. This additional
-#' information includes:
+#' \code{\link[SummarizedExperiment]{colData}} (for cell-specific information),
+#' \code{\link[SummarizedExperiment]{rowData}} (for peak-specific information),
+#' or \code{\link[SummarizedExperiment]{assays}} (for peak-by-cell matrices).
 #' @examples
 #' # default simulation
-#' sim <- simPICsimulate(pm.distr = "weibull")
+#' sim <- simPICsimulate(pm.distr = "lngamma")
 #' @importFrom SummarizedExperiment rowData rowData<-
 #' @importFrom SummarizedExperiment colData colData<-
 #' @importFrom SummarizedExperiment assays assays<-
 #' @importFrom SingleCellExperiment SingleCellExperiment
 #' @export
 simPICsimulate <- function(object = newsimPICcount(),
-                    pm.distr = "weibull",
+                    pm.distr = "lngamma",
                     method = c("single","groups"),
                     verbose = TRUE,
                     ...) {
@@ -59,7 +57,7 @@ simPICsimulate <- function(object = newsimPICcount(),
         message("simPIC is:")
         message("updating parameters...")
     }
-    object <- setsimPICparameters(object, ...)
+    object <- setsimPICparameters(object, pm.distr = pm.distr, ...)
     validObject(object)
     # Set random seed
     seed <- simPICget(object, "seed")
@@ -141,7 +139,7 @@ simPICsimulate <- function(object = newsimPICcount(),
     if (verbose) {
         message("Simulating peak mean...")
     }
-    sim <- simPICsimulatePeakMean(object, sim, pm.distr)
+    sim <- simPICsimulatePeakMean(object, sim, pm.distr, verbose)
     
     if (nBatches > 1) {
             if (verbose) {
@@ -205,11 +203,12 @@ simPICsimulatesingle <- function(object = newsimPICcount(),
 #' @rdname simPICsimulate
 #' @export
 simPICsimulatemulti <- function(object = newsimPICcount(),
-                                pm.distr = "weibull", 
+                                pm.distr = "lngamma", 
                                 method = c("groups"),
                                 verbose = TRUE, ...) {
     sim <- simPICsimulate(
         object = object,
+        pm.distr = pm.distr,
         method = "groups",
         verbose = verbose,
         ...
@@ -225,7 +224,7 @@ simPICsimulatemulti <- function(object = newsimPICcount(),
 #'
 #' @param sim SingleCellExperiment object containing simulation parameters.
 #' @param object simPICcount object with simulation parameters.
-#' @param verbose logical. To print progress messages.
+#' @param verbose Logical. Whether to print progress messages.
 #'
 #' @return SingleCellExperiment object with simulated library sizes.
 #'
@@ -247,7 +246,7 @@ simPICsimulateLibSize <- function(object, sim, verbose) {
     return(sim)
 }
 
-#' Simulate simPIC peak means.
+#' Simulate simPIC peak means
 #'
 #' Generate peak means for cells in simPIC simulation based on the estimated
 #' values of shape and rate parameters.
@@ -256,7 +255,7 @@ simPICsimulateLibSize <- function(object, sim, verbose) {
 #' @param object simPICcount object with simulation parameters.
 #' @param pm.distr distribution parameter for peak means.
 #' Available distributions: gamma, weibull, lngamma, pareto.
-#' Default is weibull.
+#' Default is lngamma.
 #' @param verbose logical. Whether to print progress messages.
 #'
 #' @return SingleCellExperiment object with simulated peak means.
@@ -264,7 +263,6 @@ simPICsimulateLibSize <- function(object, sim, verbose) {
 #' @importFrom SummarizedExperiment rowData rowData<-
 #' @importFrom stats rgamma rweibull dgamma dlnorm pgamma plnorm runif
 #' @importFrom Matrix sparseMatrix
-#' @importFrom actuar rpareto
 simPICsimulatePeakMean <- function(object, sim, pm.distr, verbose) {
     nPeaks <- simPICget(object, "nPeaks")
     message("using ", pm.distr, " distribution for simulating peak mean")
@@ -289,7 +287,7 @@ simPICsimulatePeakMean <- function(object, sim, pm.distr, verbose) {
         pareto = {
             peak.mean.shape <- simPICget(object, "peak.mean.shape")
             peak.mean.scale <- simPICget(object, "peak.mean.scale")
-            peak.means <- rpareto(
+            peak.means <- actuar::rpareto(
                 n = nPeaks, shape = peak.mean.shape,
                 scale = peak.mean.scale
             )
@@ -614,9 +612,9 @@ simPICsimulateBCVMeans <- function(object,sim) {
 }
 
 
-#' Simulate true counts.
+#' Simulate true counts
 #'
-#' Counts are simulated from a poisson distribution where each peak has a
+#' Counts are simulated from a Poisson distribution where each peak has a
 #' mean, expected library size and proportion of accessible chromatin.
 #'
 #' @param sim SingleCellExperiment object containing simulation parameters.
@@ -668,6 +666,7 @@ simPICsimulateTrueCounts <- function(object, sim) {
                             integer(nPeaks))
     
     assays(sim, withDimnames = FALSE)$counts <- true_counts
+    sim <- ensureCountsFirst(sim)
     return(sim)
 }
 
@@ -675,9 +674,9 @@ simPICsimulateTrueCounts <- function(object, sim) {
 
 
 
-#' Simulate true counts groups.
+#' Simulate true counts groups
 #'
-#' Counts are simulated from a poisson distribution where each peak has a
+#' Counts are simulated from a Poisson distribution where each peak has a
 #' mean, expected library size and proportion of accessible chromatin.
 #'
 #' @param sim SingleCellExperiment object containing simulation parameters.
@@ -720,6 +719,7 @@ simPICsimulateTrueCountsGroups <- function(object, sim) {
     rownames(true.counts) <- peak.names
     
     assays(sim,withDimnames = FALSE)$counts <- true.counts
+    sim <- ensureCountsFirst(sim)
     return(sim)
     
 }

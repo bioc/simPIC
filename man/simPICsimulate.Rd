@@ -8,7 +8,7 @@
 \usage{
 simPICsimulate(
   object = newsimPICcount(),
-  pm.distr = "weibull",
+  pm.distr = "lngamma",
   method = c("single", "groups"),
   verbose = TRUE,
   ...
@@ -18,7 +18,7 @@ simPICsimulatesingle(object = newsimPICcount(), verbose = TRUE, ...)
 
 simPICsimulatemulti(
   object = newsimPICcount(),
-  pm.distr = "weibull",
+  pm.distr = "lngamma",
   method = c("groups"),
   verbose = TRUE,
   ...
@@ -30,12 +30,12 @@ See \code{\link{simPICcount}} for details.}
 
 \item{pm.distr}{distribution parameter for peak means.
 Available distributions: gamma, weibull, lngamma, pareto.
-Default is weibull.}
+Default is lngamma.}
 
-\item{method}{to use for simulation. Single for simulating one cell-type or
-groups for simulating distinct cell-types.}
+\item{method}{Simulation mode. Use \code{"single"} to simulate one cell type
+or \code{"groups"} to simulate distinct cell types.}
 
-\item{verbose}{logical variable. Prints the simulation progress if TRUE.}
+\item{verbose}{Logical. Whether to print progress messages.}
 
 \item{...}{Any additional parameter settings to override what is provided
 in \code{simPICcount} object.}
@@ -44,15 +44,14 @@ in \code{simPICcount} object.}
 SingleCellExperiment object containing the simulated counts.
 }
 \description{
-Simulate peak by cell count matrix from a sparse single-cell ATAC-seq
-peak by cell input using simPIC methods.
+Simulate a peak-by-cell count matrix using simPIC methods.
 }
 \details{
 simPIC provides the option to manually adjust each of the
 \code{simPICcount} object parameters by calling
 \code{\link{setsimPICparameters}}.
 
- The simulation involves following steps:
+ The simulation involves the following steps:
  \enumerate{
  \item Set up simulation parameters
  \item Set up SingleCellExperiment object
@@ -65,12 +64,11 @@ simPIC provides the option to manually adjust each of the
 The final output is a
 \code{\link[SingleCellExperiment]{SingleCellExperiment}} object that
 contains the simulated count matrix. The parameters are stored in the
-\code{\link[SummarizedExperiment]{colData}} (for cell specific information),
-\code{\link[SummarizedExperiment]{rowData}} (for peak specific information) or
-\code{\link[SummarizedExperiment]{assays}} (for peak by cell matrix) slots. This additional
-information includes:
+\code{\link[SummarizedExperiment]{colData}} (for cell-specific information),
+\code{\link[SummarizedExperiment]{rowData}} (for peak-specific information),
+or \code{\link[SummarizedExperiment]{assays}} (for peak-by-cell matrices).
 }
 \examples{
 # default simulation
-sim <- simPICsimulate(pm.distr = "weibull")
+sim <- simPICsimulate(pm.distr = "lngamma")
 }

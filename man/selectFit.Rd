@@ -11,7 +11,7 @@ selectFit(data, distr, verbose = TRUE)
 
 \item{distr}{Name of the distribution to fit.}
 
-\item{verbose}{logical. To print messages or not.}
+\item{verbose}{Logical. Whether to print progress messages.}
 }
 \value{
 The selected fit object

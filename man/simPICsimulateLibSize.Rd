@@ -11,7 +11,7 @@ simPICsimulateLibSize(object, sim, verbose)
 
 \item{sim}{SingleCellExperiment object containing simulation parameters.}
 
-\item{verbose}{logical. To print progress messages.}
+\item{verbose}{Logical. Whether to print progress messages.}
 }
 \value{
 SingleCellExperiment object with simulated library sizes.
