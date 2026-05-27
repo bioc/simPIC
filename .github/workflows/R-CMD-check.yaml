@@ -38,12 +38,27 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libmagick++-dev
+
       - name: Install package dependencies
         shell: Rscript {0}
         run: |
           install.packages(c("BiocManager", "remotes", "rcmdcheck", "sessioninfo"))
           options(repos = BiocManager::repositories())
-          remotes::install_deps(dependencies = TRUE, upgrade = "never")
+          BiocManager::install(
+            c("splatter", "VariantAnnotation", "bluster", "preprocessCore"),
+            ask = FALSE,
+            update = FALSE
+          )
+          install.packages("magick")
+          remotes::install_deps(
+            dependencies = c("Depends", "Imports", "LinkingTo", "Suggests"),
+            upgrade = "never"
+          )
 
       - uses: r-lib/actions/check-r-package@v2
         with:
