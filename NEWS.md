@@ -1,4 +1,4 @@
-## Version 1.5.4 (2026-05-15)
+## Version 1.7.1 (2026-05-15)
 * Updated peak-based splatPop estimation and simulation helpers for population-
   scale simulations with genetic effects.
 * Added packaged Microglia example data and `simPICMicrogliaExample`.
