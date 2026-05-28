@@ -1,5 +1,6 @@
 test_that("splatPopEstimatePeak estimates params from SingleCellExperiment", {
   skip_if_not_installed("splatter")
+  skip_if_not_installed("VariantAnnotation")
   skip_if_not_installed("SingleCellExperiment")
 
   set.seed(101)
@@ -43,6 +44,7 @@ test_that("splatPopEstimatePeak estimates params from SingleCellExperiment", {
 
 test_that("splatPopEstimatePeak requires explicit means for matrix input", {
   skip_if_not_installed("splatter")
+  skip_if_not_installed("VariantAnnotation")
 
   counts <- matrix(rpois(20 * 12, lambda = 3), nrow = 20, ncol = 12)
 
