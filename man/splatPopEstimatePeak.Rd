@@ -63,7 +63,8 @@ optionally aggregate donor-level peak means from a
 \code{SingleCellExperiment} object and then apply the simPIC BCV correction.
 }
 \examples{
-if (requireNamespace("splatter", quietly = TRUE)) {
+if (requireNamespace("splatter", quietly = TRUE) &&
+    requireNamespace("VariantAnnotation", quietly = TRUE)) {
     set.seed(101)
     gene_means <- rgamma(60, shape = 2, rate = 0.4)
     cell_scales <- runif(48, min = 0.7, max = 1.4)
