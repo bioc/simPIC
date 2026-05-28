@@ -47,6 +47,19 @@ suppressPackageStartupMessages({
     library(simPIC)
     library(SingleCellExperiment)
 })
+
+microglia_vignette_deps <- c(
+    "splatter",
+    "VariantAnnotation",
+    "bluster",
+    "preprocessCore"
+)
+microglia_vignette_ready <- all(vapply(
+    microglia_vignette_deps,
+    requireNamespace,
+    logical(1),
+    quietly = TRUE
+))
 ```
 
 # Packaged example data
@@ -92,7 +105,7 @@ The high-level wrapper runs the packaged example end to end. For this vignette,
 the compact packaged data use a small number of donor-batch units and chr14
 peaks so the workflow can run during package checks.
 
-```{r run-example, message = FALSE, warning = FALSE}
+```{r run-example, message = FALSE, warning = FALSE, eval = microglia_vignette_ready}
 microglia_out <- simPICMicrogliaExample(
     min.cells = 20,
     pop.cv.bins = 10,
@@ -108,7 +121,7 @@ microglia_out <- simPICMicrogliaExample(
 )
 ```
 
-```{r inspect-example}
+```{r inspect-example, eval = microglia_vignette_ready}
 names(microglia_out)
 microglia_out$plot_samples
 microglia_out$params
@@ -120,7 +133,7 @@ microglia_out$sim
 The workflow returns both general PCA summaries and Poptrial-style comparison
 plots for the selected library-specific subset.
 
-```{r plots, fig.width = 11, fig.height = 7}
+```{r plots, fig.width = 11, fig.height = 7, eval = microglia_vignette_ready}
 microglia_out$plots$comparison$cell_pca_by_sample
 microglia_out$plots$comparison$sample_pca
 
@@ -149,7 +162,7 @@ The most important returned components are:
 - `comparison_real` and `comparison_sim`: optional library-specific real and
   simulated objects when a comparison subset is requested
 
-```{r object-summary}
+```{r object-summary, eval = microglia_vignette_ready}
 names(microglia_out)
 dim(microglia_out$sce)
 dim(microglia_out$bigcounts)
@@ -171,7 +184,7 @@ Accordingly, `bigcounts` is not an arbitrary subset. It is the largest retained
 `sample_batch` unit in the filtered real data, and it is paired with
 `aggregated` during parameter estimation.
 
-```{r bigcounts-details}
+```{r bigcounts-details, eval = microglia_vignette_ready}
 microglia_out$bigcounts
 table(microglia_out$bigcounts$sample_batch)
 table(microglia_out$bigcounts$Sample)
@@ -184,7 +197,7 @@ compact example. A specific library or pathology subset can be requested with
 `comparison.batch` and `comparison.pathology` when the input data include the
 desired groups.
 
-```{r comparison-summary}
+```{r comparison-summary, eval = microglia_vignette_ready}
 microglia_out$plot_samples
 table(microglia_out$sce$Sample)
 if ("Sample" %in% colnames(colData(microglia_out$sim))) {
