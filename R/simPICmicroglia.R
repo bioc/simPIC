@@ -71,9 +71,13 @@
 #'
 #' @examples
 #' \donttest{
+#' if (requireNamespace("splatter", quietly = TRUE) &&
+#'     requireNamespace("VariantAnnotation", quietly = TRUE) &&
+#'     requireNamespace("bluster", quietly = TRUE)) {
 #' out <- simPICMicrogliaExample(verbose = FALSE)
 #' out$plot_samples
 #' names(out$plots$comparison)
+#' }
 #' }
 #' @export
 simPICMicrogliaExample <- function(sce = NULL,
